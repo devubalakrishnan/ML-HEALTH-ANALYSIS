@@ -14,6 +14,9 @@ from .utilis import get_intent,symptoms,predict_disease,precautionDictionary,des
 from healthApp.randgenerator import rand
 from .models import Usersymptoms,symptoms as Symptoms
 import pickle
+from .Ecg import  ECG
+#intialize ecg object
+
 #from .models import predict_diabetes
 
 # Create your views here.
@@ -94,8 +97,64 @@ def diabetes(request):
         r=predict_diabetes(request)#)
         return r
         #en.save()
-        #return render(request,'result.html')
-    
+        #return render(request,'result.html'
+
+
+
+def heartdisease(request):
+
+    #get the uploaded image
+    if request.method=='POST':
+        #intialize ecg object
+        ecg = ECG()
+        #get the uploaded image
+        uploaded_file = request.FILES['ecg']
+        if uploaded_file is not None:
+            """#### **UPLOADED IMAGE**"""
+            # call the getimage method
+            ecg_user_image_read = ecg.getImage(uploaded_file)
+            #show the image
+            
+
+            """#### **GRAY SCALE IMAGE**"""
+            #call the convert Grayscale image method
+            ecg_user_gray_image_read = ecg.GrayImgae(ecg_user_image_read)
+            
+            
+            
+            """#### **DIVIDING LEADS**"""
+            #call the Divide leads method
+            dividing_leads=ecg.DividingLeads(ecg_user_image_read)
+
+            
+            
+            """#### **PREPROCESSED LEADS**"""
+            #call the preprocessed leads method
+            ecg_preprocessed_leads = ecg.PreprocessingLeads(dividing_leads)
+
+        
+            
+            """#### **EXTRACTING SIGNALS(1-12)**"""
+            #call the sognal extraction method
+            ec_signal_extraction = ecg.SignalExtraction_Scaling(dividing_leads)
+            
+            """#### **CONVERTING TO 1D SIGNAL**"""
+            #call the combine and conver to 1D signal method
+            ecg_1dsignal = ecg.CombineConvert1Dsignal()
+            
+                
+            """#### **PERFORM DIMENSINALITY REDUCTION**"""
+            #call the dimensinality reduction funciton
+            ecg_final = ecg.DimensionalReduciton(ecg_1dsignal)
+            
+            
+            """#### **PASS TO PRETRAINED ML MODEL FOR PREDICTION**"""
+            #call the Pretrainsed ML model for prediction
+            ecg_model=ecg.ModelLoad_predict(ecg_final)
+            return render(request,'heartdisease.html',{'prediction':ecg_model})
+    else:
+        return render(request,'heartdisease.html')
+
 
 
 
