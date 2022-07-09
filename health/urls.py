@@ -7,7 +7,7 @@ urlpatterns = [
     path('chat-bot', views.chat_bot, name='chat_bot'),
     path('predict', views.predict, name='predict'),
     path('home',views.home,name='home'),
-    path('savediabetes',views.save_diabetes,name='savediabetes')
+    path('diabetes-prediction',views.predict_diabetes,name='predicteddiabetes')
 
     #path('save-symp',update_symptoms,name='symptoms-update'),
 ]
