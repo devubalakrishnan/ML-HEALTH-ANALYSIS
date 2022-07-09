@@ -8,7 +8,7 @@
 }
 
 body {
-  background: #644bff;
+  background: #644bff !important;
   padding: 0 20px;
 }
 
@@ -19,7 +19,7 @@ body {
 
 .wrapper {
   max-width: 450px;
-  margin-left: 500px;
+  margin-left: 610px;
   margin-top: 150px;
   /*margin: 150px auto;*/
  
@@ -93,4 +93,28 @@ body {
 }
 .fa-search{
   padding: 17.5px 17.5px;
+}
+.show{
+  margin-top: 50px;
+}
+
+.frame::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.frame {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+@media only screen and (max-width: 600px) {
+  .wrapper {
+      max-width: 100%;
+      margin: auto;
+      margin-top: 30px;
+  }
+
 }

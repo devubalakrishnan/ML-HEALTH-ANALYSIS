@@ -7,21 +7,21 @@ from datetime import datetime
 # Create your models here.
 class Profile(models.Model):
     patient=models.OneToOneField(User,on_delete=models.CASCADE)
-    p_id=models.CharField(max_length=12)
-    username=models.CharField(max_length=12)
-    email=models.EmailField(max_length=20)
-    phone= models.PositiveBigIntegerField()
-    fname=models.CharField(max_length=20)
-    lname = models.CharField(max_length=20)
-    age=models.IntegerField()
+    p_id=models.CharField(max_length=12,null=True)
+    username = models.CharField(max_length=12, null=True)
+    email = models.EmailField(max_length=20, null=True)
+    phone = models.PositiveBigIntegerField(null=True)
+    fname = models.CharField(max_length=20, null=True)
+    lname = models.CharField(max_length=20, null=True)
+    age = models.IntegerField(null=True)
     sex=models.CharField(max_length=10)
     dob=models.DateField(default=datetime.today)
-    height=models.FloatField()
-    weight=models.FloatField()
-    breakfast=models.TimeField()
-    lunch=models.TimeField()
-    dinner=models.TimeField()
-    blood_grp=models.CharField(max_length=10)
+    height = models.FloatField( null=True)
+    weight = models.FloatField( null=True)
+    breakfast = models.TimeField(null=True)
+    lunch = models.TimeField(null=True)
+    dinner = models.TimeField(null=True)
+    blood_grp = models.CharField(max_length=10, null=True)
 
 #class Doctor(models.Model):
 #class Checkup
@@ -71,11 +71,12 @@ class Report(models.Model):
 
 
 class Doctor(models.Model):
-    phone=models.PositiveBigIntegerField()
-    specialization=models.CharField(max_length=20)
-    doctor_id=models.CharField(max_length=12)
-    works_in=models.CharField(max_length=12)
-    sex=models.CharField(max_length=12)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
+    phone = models.PositiveBigIntegerField(null=True)
+    specialization = models.CharField(max_length=20, null=True)
+    doctor_id = models.CharField(max_length=12, null=True)
+    works_in = models.CharField(max_length=12, null=True)
+    sex = models.CharField(max_length=12, null=True)
 
     
 class Disease_prediction(models.Model):
@@ -95,9 +96,9 @@ class Mental_health(models.Model):
     analyse=models.ForeignKey(Profile,on_delete=models.CASCADE)
 
 
-class predict_diabetes(models.Model):
+'''class predict_diabetes(models.Model):
     Glucoselevel=models.CharField(max_length=12)
     Insulin=models.CharField(max_length=12)
     BMI=models.CharField(max_length=12)
     DiabetesPF=models.CharField(max_length=12)
-    Age=models.CharField(max_length=12)
+    Age=models.CharField(max_length=12)'''

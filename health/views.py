@@ -10,11 +10,11 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .utilis import get_intent,symptoms,predict_disease,precautionDictionary,description
+from .utilis import get_intent,symptoms,predict_disease,precautionDictionary,description, predict_diabetes
 from healthApp.randgenerator import rand
 from .models import Usersymptoms,symptoms as Symptoms
 import pickle
-from .models import predict_diabetes
+#from .models import predict_diabetes
 
 # Create your views here.
 
@@ -81,20 +81,23 @@ def predict(request):
 
 
 
+def diabetes_view(request):
+    return render(request, 'diabeticform.html')
 
-
-def save_diabetes(request):
-
+def diabetes(request):
     if request.method=="POST":
-
         Glucoselevel=request.POST.get('Glucose Level')
         Insulin=request.POST.get('Insulin')
-        BMI=request.POST.get('BMI')
+        bmi=request.POST.get('BMI')
         DiabetesPF=request.POST.get('Diabetes PF')
         Age=request.POST.get('Age')
-        en=predict_diabetes(Glucoselevel= Glucoselevel,Insulin=Insulin,BMI=BMI,DiabetesPF=DiabetesPF,Age=Age)
-        en.save()
-        return render(request,'result.html')
+        r=predict_diabetes(request)#)
+        return r
+        #en.save()
+        #return render(request,'result.html')
+    
+
+
 
 
 

@@ -18,6 +18,7 @@ class Patientform(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['p_id'].widget.attrs["placeholder"]='Patient ID' 
+        self.fields['p_id'].widget.attrs["readonly"] = True
         self.fields['phone'].widget.attrs["placeholder"] ='Phone number'
         self.fields['fname'].widget.attrs["placeholder"]='First Name'  
         self.fields['lname'].widget.attrs["placeholder"]='Last Name'  
@@ -41,7 +42,8 @@ class Doctorform(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['phone'].widget.attrs["placeholder"]='Phone number' 
         self.fields['specialization'].widget.attrs["placeholder"] ='Specialization'
-        self.fields['doctor_id'].widget.attrs["placeholder"]='Doctor ID'  
+        self.fields['doctor_id'].widget.attrs["placeholder"]='Doctor ID' 
+        self.fields['doctor_id'].widget.attrs["readonly"] = True
         self.fields['works_in'].widget.attrs["placeholder"]='Works in'  
         self.fields['sex'].widget.attrs["placeholder"]='Sex' 
 

@@ -56,8 +56,8 @@
     
     
     <h2> <p style="text-align:center;">Diabetes Prediction</p></h2>
-    <form action="{%url 'predicteddiabetes%}"method="post">
-        {% crsf_token %}
+    <form action="{%url 'predicteddiabetes'%}" method="post">
+        {%csrf_token%}
    <!-- <input type="text" name="Pregnancies" placeholder="Pregnancies" required="required" /> -->
     <input type="text" name="Glucose Level" placeholder="Glucose Level" required="required" />
     <!--  <input type="text" name="Blood Pressure" placeholder="Blood Pressure" required="required" />
@@ -66,7 +66,7 @@
     <input type="text" name="BMI" placeholder="BMI" required="required" />
     <input type="text" name="Diabetes PF" placeholder="Diabetes PF" required="required" />
     <input type="text" name="Age" placeholder="Age" required="required" />
-    <button type="submit" class="registerbtn">Predict</button>
+    <input type="submit" class="registerbtn">Predict</input>
 
     </form>
     </div>

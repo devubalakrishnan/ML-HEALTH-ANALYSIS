@@ -66,6 +66,7 @@ class Chatbox{
 
     updateChatText(chatbox){
         var html='';
+        var typing = '<div class="chat-bubble messages__item--typing">'+'<div class="typing">'+'<div class="dot"></div><div class="dot"></div><div class="dot"></div></div ></div >'
         this.messages.slice().reverse().forEach(function(item){
             if(item.name=="sam")
             {
@@ -77,9 +78,12 @@ class Chatbox{
             }
 
         });
-
         const chatmessage=chatbox.querySelector('.chatbox__messages');
-        chatmessage.innerHTML=html;
+        chatmessage.innerHTML = typing + chatmessage.innerHTML;
+        setTimeout(() => {
+            chatmessage.innerHTML = html;
+        },1000);
+        
     }
 }
 const chat=new Chatbox()

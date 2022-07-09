@@ -11,7 +11,10 @@
 </head>
 
 <body>
-    <div class="wrapper">
+    {%include 'navbar.html'%}
+    <link rel="stylesheet" href="{% static 'styles/toast.css'%}">
+    {%include 'toast.html' %}
+    <div class="wrapper1">
         <div class="title-text">
             <div class="title Doctor">
                 Doctor Form
@@ -70,8 +73,17 @@
             </div>
         </div>
     </div>
+    <!--Stylesheet-->
+    
+    <script src="{%static 'js/toast.js'%}"></script>
+    {%if messages%}
+    {%for message in messages%}
+    <script>showToast('{{message.tags}}', '{{message}}');</script>
+    {%endfor%}
+    {%endif%}
     <script>
         const DoctorText = document.querySelector(".title-text .Doctor");
+        const wrapper=document.querySelector(".wrapper1");
         const DoctorForm = document.querySelector("form.Doctor");
         const DoctorBtn = document.querySelector("label.Doctor");
         const PatientBtn = document.querySelector("label.Patient");
@@ -79,10 +91,12 @@
         PatientBtn.onclick = (() => {
             DoctorForm.style.marginLeft = "-50%";
             DoctorText.style.marginLeft = "-50%";
+            wrapper.style.maxHeight="900px";
         });
         DoctorBtn.onclick = (() => {
             DoctorForm.style.marginLeft = "0%";
             DoctorText.style.marginLeft = "0%";
+            wrapper.style.maxHeight = "650px";
         });
         PatientLink.onclick = (() => {
             PatientBtn.click();

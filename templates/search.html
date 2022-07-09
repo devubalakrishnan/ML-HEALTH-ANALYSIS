@@ -1,5 +1,6 @@
 {%load static%}
-<DOCTYPE HTML>
+{%block content%}
+<!DOCTYPE html>
   <html lang="en" dir="ltr">
 
   <head>
@@ -12,6 +13,7 @@
   </head>
 
   <body>
+    {%include 'navbar.html'%}
     <div class="wrapper">
       <div class="search-input">
         <input type="text" placeholder="Type to search..">
@@ -21,15 +23,22 @@
           <li>Fever</li>
         </div>
         <div class="icon"><i class="fas fa-search"></i></div>
-        <a></a>
+        
+      </div>
+      <div class="show">
+        <iframe src="" style="border:0px #ffffff none;" name="page"  frameborder="1" marginheight="0px"
+          marginwidth="0px" height="400px" width="800px" allowfullscreen class="frame"></iframe>
+        <a target="page" href=""></a>
+      
       </div>
     </div>
+    
     {%block bot%}
     {%endblock%}
     <script src="{%static 'js/suggestions.js'%}"></script>
     <script src="{%static 'js/search.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/app.js' %}"></script>
   </body>
-</DOCTYPE>
 
 </html>
+{%endblock%}

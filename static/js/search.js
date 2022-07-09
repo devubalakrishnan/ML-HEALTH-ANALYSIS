@@ -1,9 +1,11 @@
 // getting all required elements
 const searchWrapper = document.querySelector(".search-input");
+const show=document.querySelector(".show");
 const inputBox = searchWrapper.querySelector("input");
 const suggBox = searchWrapper.querySelector(".autocom-box");
 const icon = searchWrapper.querySelector(".icon");
-let linkTag = searchWrapper.querySelector("a");
+let linkTag = show.querySelector("a");
+let frame=show.querySelector(".frame");
 let webLink;
 
 // if user press any key and release
@@ -12,7 +14,7 @@ inputBox.onkeyup = (e) => {
     let emptyArray = [];
     if (userData) {
         icon.onclick = () => {
-            webLink = `https://www.google.com/search?q=${userData}`;
+            webLink = `https://www.google.com/search?q=${userData}&igu=1`;
             linkTag.setAttribute("href", webLink);
             linkTag.click();
         }
@@ -40,7 +42,7 @@ function select(element) {
     let selectData = element.textContent;
     inputBox.value = selectData;
     icon.onclick = () => {
-        webLink = `https://www.google.com/search?q=${selectData}`;
+        webLink = `https://www.google.com/search?q=${selectData}&igu=1`;
         linkTag.setAttribute("href", webLink);
         linkTag.click();
     }

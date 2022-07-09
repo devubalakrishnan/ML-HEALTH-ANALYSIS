@@ -62,7 +62,7 @@ def predict_disease(affected_symps,final_symp):
     k = 10
     #diseases = list(set(Y['label_dis']))
     diseases.sort()
-    scores = [0.68213922,0.87945671,0.92473118,0.94793435,0.97792869]
+    scores = [0.78213922,0.87945671,0.92473118,0.94793435,0.97792869]
     final_symp=set(final_symp)
     topk = prediction[0].argsort()[-k:][::-1]
     print(f"\nTop {k} diseases predicted based on symptoms")
@@ -104,11 +104,12 @@ def predict_disease(affected_symps,final_symp):
 
 
 def predict_diabetes(request):
-    
-
-    float_features = [float(x) for x in request.form.values()]
+    float_features = [
+        float(x) for key, x in request.POST.items() if key != "csrfmiddlewaretoken"]
     final_features = [np.array(float_features)]
-    pred = model.predict( sc.transform(final_features) )
-    return render (request,"diabeticform.html", prediction = pred)
+    print(sc.transform(final_features))
+    pred = diabetes_mod.predict( sc.transform(final_features) )
+    return render (request,"result.html",{'prediction':pred})
+
 
     
