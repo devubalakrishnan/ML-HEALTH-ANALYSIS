@@ -7,16 +7,16 @@
 }
 body
 {
-  background:#232c33;
+  background: #f5fbff;
 }
 .navigation
 {
  position: relative;
  height:600px;
  width:70px;
- background:#2b343b;
+ background:#ffffff;
  box-shadow:10px 0 0 #4187f6;
- border-left: 10px solid #2b343b;
+ border-left: 10px solid #ffffff;
  overflow-x: hidden;
  transition: 0.05s;
 }
@@ -57,7 +57,7 @@ body
     width: 100%;
     display: flex;
     text-decoration: none;
-    color:#fff;
+    color:#0f1417;
 }
 .navigation ul li.active a::before
 {
@@ -67,7 +67,7 @@ body
     right:0;
     width:30px;
     height:30px;
-    background:#2b343b;
+    background:#ffffff;
     border-radius:50%;
     box-shadow:15px 15px 0 #4187f6;
 }
@@ -79,7 +79,7 @@ body
     right:0;
     width:30px;
     height:30px;
-    background:#2b343b;
+    background:#ffffff;
     border-radius:50%;
     box-shadow:15px -15px 0 #4187f6;
 }
