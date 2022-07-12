@@ -29,11 +29,21 @@ class Profile(models.Model):
 #class mental_health
 
 class Medicines(models.Model):
+    timeslots=((1,'BREAK FAST'),
+                    (2,'LUNCH'),
+                    (3,'DINNER')
+              )
+    med_type=(('PILLS','PILLS'),
+              ('TABLET','TABLET'),
+              ('INJECTION','INJECTION'),
+              ('SYRUP','SYRUP'))
     intake_user=models.ForeignKey(Profile,on_delete=models.CASCADE)
     medicine_name = models.CharField(max_length=100)
+    medicine_type=models.CharField(max_length=30,choices=med_type,default='PILLS')
+    dosage=models.FloatField(default=0)
     before_food=models.BooleanField(default=True)
     after_food=models.BooleanField(default= False)
-    time_slot=models.PositiveSmallIntegerField(default =1)
+    time_slot=models.PositiveSmallIntegerField(choices=timeslots,default =1)
     
 class Trackweight(models.Model):
     current_weight=models.FloatField()

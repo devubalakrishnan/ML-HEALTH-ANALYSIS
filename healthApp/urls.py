@@ -20,5 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('mentalHealth/',include('mentalHealth.urls')),
     path('health/', include('health.urls')),
-    path('Accounts/', include('Accounts.urls'))
+    path('Accounts/', include('Accounts.urls')),
+    path('notifications/', include('notifications.urls'))
 ]
