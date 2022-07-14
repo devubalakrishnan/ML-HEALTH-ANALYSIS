@@ -21,4 +21,5 @@ def notification_handler(sender, instance, created, **kwargs):
         task = PeriodicTask.objects.create(crontab=schedule, name="broadcast-notification-"+str(
             instance.id), task="notifications.tasks.broadcast_notification", args=json.dumps((instance.id,)))
 
+
     #if not created:

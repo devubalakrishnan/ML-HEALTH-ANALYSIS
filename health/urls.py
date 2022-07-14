@@ -12,7 +12,6 @@ urlpatterns = [
     path('diabetes-result', views.diabetes, name='predicteddiabetes'),
     path('pedigree',views.pedigree,name="pedigree")
     path('heart-disease',views.heartdisease, name='ecg')
-
     #path('save-symp',update_symptoms,name='symptoms-update'),
 ]
 
