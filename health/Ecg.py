@@ -234,12 +234,13 @@ class ECG:
 		This Function Loads the pretrained model and perfrom ECG classification
 		return the classification Type.
 		"""
-		print("final_df=",final_df)
-		final_df=np.array(final_df)
+		print("final_df 1=",list(final_df))
+		final_df=np.array(list(final_df))
 		final_df = final_df.reshape(1, -1)
+		final_df=np.ascontiguousarray(final_df, dtype=np.float32)
 		loaded_model = joblib.load(str(BASE_DIR)+'/ml/Heart_Disease_Prediction_using_ECG (4).pkl')
-		print("final_df=",final_df)
-		result = loaded_model.predict()
+		print("final_df 2=",final_df)
+		result = loaded_model.predict(final_df)
 		if result[0] == 1:
 			return "You ECG corresponds to Myocardial Infarction"
 		elif result[0] == 0:
