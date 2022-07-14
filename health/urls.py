@@ -8,8 +8,8 @@ urlpatterns = [
     path('predict', views.predict, name='predict'),
     path('home',views.home,name='home'),
     path('diabetes-predict', views.diabetes_view, name='diabetes-predict'),
-    path('diabetes-result', views.diabetes, name='predicteddiabetes')
-
+    path('diabetes-result', views.diabetes, name='predicteddiabetes'),
+    path('pedigree',views.pedigree,name="pedigree")
     #path('save-symp',update_symptoms,name='symptoms-update'),
 ]
 

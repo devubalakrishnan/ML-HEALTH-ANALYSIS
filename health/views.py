@@ -14,6 +14,7 @@ from .utilis import get_intent,symptoms,predict_disease,precautionDictionary,des
 from healthApp.randgenerator import rand
 from .models import Usersymptoms,symptoms as Symptoms
 import pickle
+from .pedigree import Pedigree
 #from .models import predict_diabetes
 
 # Create your views here.
@@ -82,8 +83,9 @@ def predict(request):
 
 
 def diabetes_view(request):
-    return render(request, 'diabeticform.html')
+    return render(request, 'diabeticform.html',{'age':request.user.profile.age})
 
+@login_required
 def diabetes(request):
     if request.method=="POST":
         Glucoselevel=request.POST.get('Glucose Level')
@@ -97,6 +99,26 @@ def diabetes(request):
         #return render(request,'result.html')
     
 
+@csrf_exempt
+def pedigree(request):
+    data = json.loads(request.body)
+    for keys,vals in data.items():
+        if vals=="yes":
+            data[keys]=True
+        else:
+            data[keys]=False
+    #print(data)
+    p = Pedigree(data["grandp_f"], data["grandp_m"], data["diabetic_father"], data["diabetic_mother"],
+                 request.user.profile.sex.upper(), data["siblings"])
+    p.get_parent_chromosomes()
+    p.offsprings = p.punnet_square('disease-allele')
+    p.has_diabetic_siblings()
+    p.offsprings_xlinked = p.punnet_square('x-linked')
+    p.determine_type_probab()
+    p.x_linked_probablity()
+
+    pedigree={"pedigree":p.probablity}
+    return HttpResponse(json.dumps(pedigree), content_type='application/json')
 
 
 
