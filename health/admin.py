@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Medicines, medicine_prescription, symptoms,Usersymptoms,Doctor,Profile, track_medicine
+from .models import Checkup, Medicines, medicine_prescription, symptoms,Usersymptoms,Doctor,Profile, track_medicine
 # Register your models here.
 
 class med_pread(admin.ModelAdmin):
@@ -21,6 +21,7 @@ class patient_ad(admin.ModelAdmin):
     list_display = ('pk', 'p_id', 'patient')
 
 
+admin.site.register(Checkup)
 admin.site.register(Doctor,doctor_ad)
 admin.site.register(symptoms,symptomsad)
 admin.site.register(Usersymptoms,usersymp_ad)

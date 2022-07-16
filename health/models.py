@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from distutils.command import upload
 from email import message
 from math import remainder
 from sys import maxsize
@@ -33,11 +34,31 @@ class Profile(models.Model):
         return self.patient.username
     def dash_url(self):
         return reverse('patient-dash', kwargs={'patient_id': self.p_id})
+    def bmi(self):
+        BMI = self.weight / (self.height/100)**2
+        return round(BMI,2)
+    
+    #checkup id genration
+    def get_checkup_id(self):
+        checkup=self.checkups.all()
+        checkup_count=checkup.count()
+        checkup_id='CHKUP'+str(checkup_count)
+        return checkup_id
 
 #class Doctor(models.Model):
 #class Checkup
 #class disease
 #class mental_health
+
+
+class Doctor(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    phone = models.PositiveBigIntegerField(null=True)
+    specialization = models.CharField(max_length=20, null=True)
+    doctor_id = models.CharField(max_length=12, null=True)
+    works_in = models.CharField(max_length=12, null=True)
+    sex = models.CharField(max_length=12, null=True)
+
 
 class Medicines(models.Model):
     timeslots=(('BREAK FAST',1),
@@ -111,11 +132,17 @@ class Usersymptoms(models.Model):
     timestamp=models.TimeField(default=datetime.now)
 
 class Checkup(models.Model):
+    types=(('DIABETES','DIABETES'),
+            ('HEART DISEASE','HEART DISEASE'),
+            ('SYMPTOMS CHECK','SYMPTOMS CHECK'))
     checkup_id=models.CharField(max_length=12)
-    checkup_user=models.ForeignKey(Profile,on_delete=models.CASCADE)
+    checkup_user=models.ForeignKey(Profile,on_delete=models.CASCADE,related_name="checkups")
     checkup_date=models.DateTimeField()
-    checkup_type=models.CharField(max_length=12)
-
+    checkup_type=models.CharField(max_length=20,choices=types)
+    checkup_details=models.JSONField(null=True)
+    is_verified = models.BooleanField(default=False)
+    scan_path = models.ImageField(upload_to='ecg scan',null=True)
+    verified_by = models.ForeignKey(Doctor, on_delete=models.CASCADE,null=True)
 
 
 class Report(models.Model):
@@ -124,23 +151,17 @@ class Report(models.Model):
     generates=models.OneToOneField(Checkup,on_delete=models.CASCADE) 
 
 
-class Doctor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
-    phone = models.PositiveBigIntegerField(null=True)
-    specialization = models.CharField(max_length=20, null=True)
-    doctor_id = models.CharField(max_length=12, null=True)
-    works_in = models.CharField(max_length=12, null=True)
-    sex = models.CharField(max_length=12, null=True)
+
 
     
-class Disease_prediction(models.Model):
+'''class Disease_prediction(models.Model):
     checkup_id=models.CharField(max_length=12)
     predictor_type=models.CharField(max_length=12)
     is_verified=models.CharField(max_length=12)
     scan_path=models.CharField(max_length=12)
     prediction=models.CharField(max_length=12)
     name_patient=models.ForeignKey(Profile,on_delete=models.CASCADE)
-    verified_by=models.ForeignKey(Doctor,on_delete=models.CASCADE)
+    verified_by=models.ForeignKey(Doctor,on_delete=models.CASCADE)'''
 
 
 class Mental_health(models.Model):

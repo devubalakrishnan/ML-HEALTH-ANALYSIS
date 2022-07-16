@@ -3,7 +3,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 # Create your views here.
 def notifications_view(request):
-    return render(request,'notifications.html',{
+    return render(request,'current_vitals.html',{
         'room_name':'broadcast'
     })
 

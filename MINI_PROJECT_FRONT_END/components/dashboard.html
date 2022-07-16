@@ -8,13 +8,13 @@
     <link rel="icon" href="https://medical-admin-template.multipurposethemes.com/images/favicon.ico">
     <title>Document</title>
     <!-- Vendors Style-->
-    <link rel="stylesheet" type="text/css" href="style1.css">
-    <link rel="stylesheet" href="css/vendors_css.css">
+    <link rel="stylesheet" type="text/css" href="{%static 'stles/style1.css'%}">
+    <link rel="stylesheet" href="{%static 'styles/css/vendors_css.css'%}">
 
     <!-- Style-->
     
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/skin_color.css">
+    <link rel="stylesheet" href="{%static'css/style.css'%}">
+    <link rel="stylesheet" href="{%static 'styles/css/skin_color.css'%}">
     
 </head>
 
@@ -66,7 +66,7 @@
                                     <p class="pt-5 fs-14 mb-0 fw-700 text-primary">Johen Doe</p>
                                     <small class="fs-10 mb-0 text-uppercase text-mute">Admin</small>
                                 </div>
-                                <img src="../images/avatar/avatar-1.png"
+                                <img src="{%static 'media/images/avatar/avatar-1.png'%}"
                                     class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" />
                             </div>
                         </a>
@@ -180,12 +180,12 @@
                                 <a href="index.html" class="logo">
                                     <!-- logo-->
                                     <div class="logo-mini w-50">
-                                        <span class="light-logo"><img src="../images/HEALTHICA.png" alt="logo"></span>
-                                        <span class="dark-logo"><img src="../images/logo-letter.png" alt="logo"></span>
+                                        <span class="light-logo"><img src="{%static 'media/images/HEALTHICA.png'%}" alt="logo"></span>
+                                        <span class="dark-logo"><img src="../C" alt="logo"></span>
                                     </div>
                                     <div class="logo-lg">
-                                        <span class="light-logo"><img src="../images/healthica-text.png" alt="logo"></span>
-                                        <span class="dark-logo"><img src="../images/logo-light-text.png" alt="logo"></span>
+                                        <span class="light-logo"><img src="{%static 'media/images/healthica-text.png'%}" alt="logo"></span>
+                                        <span class="dark-logo"><img src="{%static 'media/images/logo-light-text.png'%}" alt="logo"></span>
                                     </div>
                                 </a>
                             </div>
@@ -258,16 +258,16 @@
 
     
     <!-- Vendor JS -->
-    <script src="js/vendors.min.js"></script>
-    <script src="js/pages/chat-popup.js"></script>
-    <script src="../assets/icons/feather-icons/feather.min.js"></script>
+    <script src="{%static 'djs/vendors.min.js'%}"></script>
+    <script src="{%static 'djs/pages/chat-popup.js'%}"></script>
+    <script src="{%static 'assets/icons/feather-icons/feather.min.js'%}"></script>
 
-    <script src="../assets/vendor_components/apexcharts-bundle/dist/apexcharts.js"></script>
-    <script src="../rawgit.com/nnnick/Chart.js/v1.0.2/Chart.min.js"></script>
+    <script src="{%static 'assets/vendor_components/apexcharts-bundle/dist/apexcharts.js'%}"></script>
+    <script src="{%static 'rawgit.com/nnnick/Chart.js/v1.0.2/Chart.min.js'%}"></script>
 
     <!-- Doclinic App -->
-    <script src="js/template.js"></script>
-    <script src="js/pages/dashboard.js"></script>
+    <script src=""></script>
+    <script src="{%static 'djs/template.js'%}"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     
     

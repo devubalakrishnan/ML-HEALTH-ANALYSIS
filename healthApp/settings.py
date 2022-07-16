@@ -18,7 +18,7 @@ import Accounts
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMP = BASE_DIR/'templates'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 

@@ -30,7 +30,7 @@
             <i class="material-icons dp48 right">settings</i>
         </h3>
 
-        
+
 
     </div>
 
@@ -86,7 +86,7 @@
     <div class="content"></div>
     {{ patient_id|json_script:"room-name" }}
     <script>
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        const patient_id= JSON.parse(document.getElementById('room-name').textContent);
         const notificationSocket = new WebSocket(
             'ws://'
             + window.location.host
@@ -98,8 +98,8 @@
         notificationSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
             console.log(data);
-            document.getElementById('noti-container').innerHTML+='<input class="checkbox" type="checkbox" id="size_1" value="small" checked />'+'<label class="notification new" for= "size_1"> <em>1</em>'+data["message"]+'<i class="material-icons dp48 right" >clear</i></label>';
-            document.getElementById('noti-count').innerHTML=parseInt(document.getElementById('noti-count').innerHTML)+1
+            document.getElementById('noti-container').innerHTML += '<input class="checkbox" type="checkbox" id="size_1" value="small" checked />' + '<label class="notification new" for= "size_1"> <em>1</em>' + data["message"] + '<i class="material-icons dp48 right" >clear</i></label>';
+            document.getElementById('noti-count').innerHTML = parseInt(document.getElementById('noti-count').innerHTML) + 1
             //document.querySelector('#notification-log').value += (data.message + '\n');
         };
 
@@ -114,6 +114,6 @@
             }
         };
 
-       
+
     </script>
 </main>
