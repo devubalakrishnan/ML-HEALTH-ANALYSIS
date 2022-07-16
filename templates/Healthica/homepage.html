@@ -96,11 +96,13 @@
 
         <div class="row">
           <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
-            <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
-              <div class="icon"><i class="fas fa-heartbeat"></i></div>
-              <h4 class="title"><a href=""> Summary</a></h4>
-              <p class="description">We provide a detailed summary of all your online medical documents</p>
-            </div>
+            <a href="{{request.user.profile.dash_url}}">
+              <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
+                <div class="icon"><i class="fas fa-heartbeat"></i></div>
+                <h4 class="title">Dashboard</h4>
+                <p class="description">We provide a detailed summary of all your online medical documents</p>
+              </div>
+            </a>
           </div>
           <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
             <a href="{%url 'chat_bot'%}">
@@ -108,25 +110,30 @@
               <div class="icon"><i class="fas fa-dna"></i></div>
               <h4 class="title">Symptoms Checker</h4>
               <p class="description">If you are not sure of what symptoms you have just visit our symotoms database to check if you may have it.</p>
-            </div>
+              </div>
             </a>
             
           </div>
           
           <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
-            <div class="icon-box" data-aos="fade-up" data-aos-delay="300">
-              <div class="icon"><i class="fas fa-temperature-high"></i></div>
-              <h4 class="title"><a href="">Disease Predictor</a></h4>
-              <p class="description">Based on the list of symptoms that you have, we offer our comprehensive and detailed disease diagnosis.</p>
-            </div>
+            <a href="{%url 'diabetes-predict'%}">
+              <div class="icon-box" data-aos="fade-up" data-aos-delay="300">
+                <div class="icon"><i class="fas fa-temperature-high"></i></div>
+                <h4 class="title">Diabetes Predictor</h4>
+                <p class="description">Based on the values of glucose, Insulin,Pedigree function, BMI and age get an insight on risk of having diabetes.</p>
+              </div>
+            </a>
           </div>
 
           <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
-            <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
-              <div class="icon"><i class="fas fa-hand-holding-medical"></i></div>
-              <h4 class="title"><a href="">Prescriptions</a></h4>
-              <p class="description">Our prescription tracker takes note of all the prescriptions in your medicine cabinet and reminds you when it is time to stock up.</p>
-            </div>
+            <a href="{%url 'ecg'%}">
+              <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
+                <div class="icon"><i class="fas fa-hand-holding-medical"></i></div>
+                <h4 class="title">Heart Disease</h4>
+                <p class="description">Our prescription tracker takes note of all the prescriptions in your medicine cabinet and
+                  reminds you when it is time to stock up.</p>
+              </div>
+            </a>
           </div>
 
         </div>

@@ -1,5 +1,6 @@
 from cmath import e
 from errno import EEXIST
+from multiprocessing import context
 from unicodedata import name
 from django.contrib.auth.decorators import login_required
 from ast import Return
@@ -12,7 +13,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .utilis import get_intent,symptoms,predict_disease,precautionDictionary,description, predict_diabetes
 from healthApp.randgenerator import rand
-from .models import Usersymptoms,symptoms as Symptoms
+from .models import Profile, Usersymptoms,symptoms as Symptoms
 import pickle
 from .pedigree import Pedigree
 from .Ecg import  ECG
@@ -30,6 +31,15 @@ def home(request):
     content={"name":"devu","symptoms":symptoms}
     return render(request, 'healthica/homepage.html',content)
     #return HttpResponse('<h1>hello</h1>')
+
+def dashboard_patient(request,patient_id):
+    patient=Profile.objects.get(p_id=patient_id)
+    context={
+        'patient_id':patient.p_id
+    }
+    
+    return render(request,"dashboard-patient.html",context)
+
 
 def get_response(request,intent,session):
     response=''

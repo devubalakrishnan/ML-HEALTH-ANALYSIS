@@ -2,10 +2,10 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 
-class notificationConsumer(AsyncWebsocketConsumer):
+class dashboardConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'notification_%s' % self.room_name
+        self.room_name = self.scope['url_route']['kwargs']['patient_id']
+        self.room_group_name = 'medicine-notificaton-%s' % self.room_name
 
         # Join room group
         await self.channel_layer.group_add(
@@ -37,7 +37,7 @@ class notificationConsumer(AsyncWebsocketConsumer):
     #    )
 
     # Receive message from room group
-    async def send_notification(self, event):
+    async def send_medicine_notification(self, event):
         message = event['message']
 
         # Send message to WebSocket

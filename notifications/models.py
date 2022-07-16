@@ -12,14 +12,14 @@ class medicine_notifications(models.Model):
     class Meta:
         ordering=['-send_on']
 
-@receiver(post_save,sender=medicine_notifications)
-def notification_handler(sender, instance, created, **kwargs):
-    # call group_send function directly to send notificatoions or you can create a dynamic task in celery beat
-    if created:
-        schedule, created = CrontabSchedule.objects.get_or_create(
-            hour=instance.send_on.hour, minute=instance.send_on.minute, day_of_month=instance.send_on.day)
-        task = PeriodicTask.objects.create(crontab=schedule, name="broadcast-notification-"+str(
-            instance.id), task="notifications.tasks.broadcast_notification", args=json.dumps((instance.id,)))
+'''    @receiver(post_save,sender=medicine_notifications)
+    def notification_handler(sender, instance, created, **kwargs):
+        # call group_send function directly to send notificatoions or you can create a dynamic task in celery beat
+        if created:
+            schedule, created = CrontabSchedule.objects.get_or_create(
+                hour=instance.send_on.hour, minute=instance.send_on.minute, day_of_month=instance.send_on.day)
+            task = PeriodicTask.objects.create(crontab=schedule, name="broadcast-notification-"+str(
+                instance.id), task="notifications.tasks.medicine_notification", args=json.dumps((instance.id,)))
 
 
-    #if not created:
+        #if not created:'''

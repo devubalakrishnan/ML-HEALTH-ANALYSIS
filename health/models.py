@@ -1,9 +1,15 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from email import message
+from math import remainder
 from sys import maxsize
 from xml.parsers.expat import model
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import datetime
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django_celery_beat.models import MINUTES, PeriodicTask, CrontabSchedule, PeriodicTasks
+from django.urls import reverse
+import json
 # Create your models here.
 class Profile(models.Model):
     patient=models.OneToOneField(User,on_delete=models.CASCADE)
@@ -23,32 +29,73 @@ class Profile(models.Model):
     dinner = models.TimeField(null=True)
     blood_grp = models.CharField(max_length=10, null=True)
 
+    def __str__(self):
+        return self.patient.username
+    def dash_url(self):
+        return reverse('patient-dash', kwargs={'patient_id': self.p_id})
+
 #class Doctor(models.Model):
 #class Checkup
 #class disease
 #class mental_health
 
 class Medicines(models.Model):
-    timeslots=((1,'BREAK FAST'),
-                    (2,'LUNCH'),
-                    (3,'DINNER')
+    timeslots=(('BREAK FAST',1),
+                    ('LUNCH',2),
+                    ('DINNER',3)
               )
     med_type=(('PILLS','PILLS'),
               ('TABLET','TABLET'),
               ('INJECTION','INJECTION'),
               ('SYRUP','SYRUP'))
-    intake_user=models.ForeignKey(Profile,on_delete=models.CASCADE)
     medicine_name = models.CharField(max_length=100)
     medicine_type=models.CharField(max_length=30,choices=med_type,default='PILLS')
     dosage=models.FloatField(default=0)
     before_food=models.BooleanField(default=True)
     after_food=models.BooleanField(default= False)
-    time_slot=models.PositiveSmallIntegerField(choices=timeslots,default =1)
-    
+    time_slot = models.CharField(choices=timeslots, max_length=20)
+
+class medicine_prescription(models.Model):
+    timeslots = (('BREAK FAST', 1),
+                 ('LUNCH', 2),
+                 ('DINNER', 3)
+                 )
+    intake_user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    medicines = models.ManyToManyField(Medicines)
+    timeslot = models.CharField(choices=timeslots, default=1, max_length=20)
+    before_food = models.BooleanField(default=True)
+    send_on=models.DateTimeField()
+    message = models.TextField(max_length=200, default='Its Time to take your medicine')
+
+
+@receiver(post_save, sender=medicine_prescription)
+def notification_handler(sender, instance, created, **kwargs):
+    # call group_send function directly to send notificatoions or you can create a dynamic task in celery beat
+    if created:
+        if instance.before_food:
+            send_time=instance.send_on - timedelta(minutes=30)
+            name=f"medicine-notification-{instance.intake_user.p_id}-{instance.timeslot}-BF"
+        else:
+            send_time = instance.send_on + timedelta(minutes=30)
+            name = f"medicine-notification-{instance.intake_user.p_id}-{instance.timeslot}-BF"
+
+        schedule, created = CrontabSchedule.objects.get_or_create(hour=send_time.hour, minute=send_time.minute)
+        task = PeriodicTask.objects.create(crontab=schedule, name=name, task="notifications.tasks.medicine_notification", args=json.dumps((instance.id,)))
+
+
+class track_medicine(models.Model):
+    prescription = models.ForeignKey(medicine_prescription, on_delete=models.CASCADE, related_name="track_medicine")
+    medicine_date=models.DateField()
+    took_medicines = models.BooleanField(default=False)
+    reminder_sent = models.BooleanField(default=False)
+    class meta:
+        ordering=['-medicine_date']
+
 class Trackweight(models.Model):
     current_weight=models.FloatField()
     user=models.ForeignKey(Profile,on_delete=models.CASCADE)
     timestamp=models.DateTimeField()
+
 
 class symptoms(models.Model):
     symptom_name=models.CharField(max_length=100,null=False)
@@ -62,9 +109,6 @@ class Usersymptoms(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     my_symptoms=models.ManyToManyField(symptoms)
     timestamp=models.TimeField(default=datetime.now)
-
-
-
 
 class Checkup(models.Model):
     checkup_id=models.CharField(max_length=12)
