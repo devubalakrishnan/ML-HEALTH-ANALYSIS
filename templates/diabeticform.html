@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html>
     <head>
@@ -7,7 +8,8 @@
 
     <style>
     body {
-    font-family: Arial, Helvetica, sans-serif;
+    /*font-family: Arial, Helvetica, sans-serif;*/
+    background: #f5fbff !important;
     }
 
    
@@ -21,27 +23,28 @@
     box-sizing: border-box;
     }
     .registerbtn {
-    background-color: #e48912;
-    color: white;
+    background-color: #6191FF;
+    color: black;
     padding: 16px 20px;
-    margin: 8px 0;
+    margin: 12px 0;
     border: none;
     cursor: pointer;
     width: 100%;
-    opacity: 0.9;
+    opacity: 1;
     }
 
     .registerbtn:hover {
     opacity:1;
     }
     p{
-        color: rgb(58, 139, 11);
+        color: #0A19FE;
         font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     }
 
 
     input[type=submit]:hover {
-    background-color: #17cce4;
+    background-color: #0A19FE;
+    color: white;
     }
     .center {
     margin: auto;
@@ -49,28 +52,108 @@
     border: 3px solid #ff9101c5;
     padding: 10px;
     }
-
+    #form1,#form2{
+            width: 500px;
+    background: white;
+    padding: 10px 50px;
+    margin: auto;
+    /* */
+    font-size: 16px;
+    border-radius: 10px;
+    }
+    .fields{
+        padding-top: 15px;
+    }
+    #form2{
+        display: none;
+        opacity: 0;
+        transition: display 3s linear;
+    }
+    .spacer{
+        margin-top: 150px;
+    }
+    .image img{
+        width: 80%;
+        margin: 63px 15% auto;
+    }
+    .row>* {
+        width: 50% !important;
+    }
     </style>
     </head>
     <body>
-    
-    
-    <h2> <p style="text-align:center;">Diabetes Prediction</p></h2>
-    <form action="{%url 'predicteddiabetes'%}" method="post">
-        {%csrf_token%}
-   <!-- <input type="text" name="Pregnancies" placeholder="Pregnancies" required="required" /> -->
-    <input type="text" name="Glucose Level" placeholder="Glucose Level" required="required" />
-    <!--  <input type="text" name="Blood Pressure" placeholder="Blood Pressure" required="required" />
-    <input type="text" name="Skin Thickness" placeholder="Skin Thickness" required="required" />-->
-    <input type="text" name="Insulin" placeholder="Insulin" required="required" />
-    <input type="text" name="BMI" placeholder="BMI" required="required" />
-    <input type="text" name="Diabetes PF" placeholder="Diabetes PF" required="required" />
-    <input type="text" name="Age" placeholder="Age" required="required" />
-    <input type="submit" class="registerbtn">Predict</input>
+    {%include 'navbar.html'%}
+    <div class="spacer"></div>
 
-    </form>
+    
+    <div class="row">
+        <div class="image">
+            <img src="{%static 'media/img/diabetes.png'%}" alt="">
+        </div>
+        
+        <div class="forms">
+            <h2>
+                <p style="text-align:center;">Diabetes Prediction</p>
+            </h2>
+            <div id="form1">
+                <form id="ped_form" name="pedigree_form">
+                    <div class="fields">
+                        <label for="grandparents_father">Is any of your Grand Parents(Father's Parents) Diabetic?</label>
+                        <select name="grandparents_father" id="">
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+                    <div class="fields">
+                        <label for="father_diabetic">Is your Father diabetic?</label>
+                        <select name="father_diabetic" id="">
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+                    <div class="fields">
+                        <label for="grandparents_mother">Is any of your Grand Parents(Mother's Parents) Diabetic?</label>
+                        <select name="grandparents_mother" id="">
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+                    <div class="fields">
+                        <label for="mother_diabetic">Is your Mother diabetic?</label>
+                        <select name="mother_diabetic" id="">
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+                    <div class="fields">
+                        <label for="siblings">Is your brother/Sister diabetic?</label>
+                        <select name="siblings" id="">
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+                    <input type="submit" class="registerbtn" value="Get pedigree">
+                </form>
+            </div>
+            <div id="form2">
+                <form action="{%url 'predicteddiabetes'%}" method="post" name="diabetic_form">
+                    {%csrf_token%}
+                    <!-- <input type="text" name="Pregnancies" placeholder="Pregnancies" required="required" /> -->
+                    <input type="text" name="Glucose Level" placeholder="Glucose Level" required="required" />
+                    <!--  <input type="text" name="Blood Pressure" placeholder="Blood Pressure" required="required" />
+                                <input type="text" name="Skin Thickness" placeholder="Skin Thickness" required="required" />-->
+                    <input type="text" name="Insulin" placeholder="Insulin" required="required" />
+                    <input type="text" name="BMI" placeholder="BMI" required="required" />
+                    <input type="text" name="Diabetes_PF" placeholder="Diabetes PF" required="required" readonly />
+                    <input type="text" name="Age" placeholder="Age" required="required" value="{{age}}" />
+                    <input type="submit" class="registerbtn" value="PREDICT">
+                </form>
+            </div>
+        </div>
     </div>
-
+    
+    <script src="{%static 'js/pedigree.js'%}"></script>
+    
     </body>
 </html>
   

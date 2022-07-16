@@ -79,13 +79,13 @@ class ECG:
 				y_counter+=1
 	    
 		#save the image
-		fig.savefig('Leads_1-12_figure.png')
+		fig.savefig('ECG_FILES/Leads_1-12_figure.png')
 		fig1 , ax1 = plt.subplots()
 		fig1.set_size_inches(10, 10)
 		ax1.imshow(Lead_13)
 		ax1.set_title("Leads 13")
 		ax1.axis('off')
-		fig1.savefig('Long_Lead_13_figure.png')
+		fig1.savefig('ECG_FILES/Long_Lead_13_figure.png')
 
 		return Leads
 
@@ -123,7 +123,7 @@ class ECG:
 				ax2[x_counter][y_counter].axis('off')
 				ax2[x_counter][y_counter].set_title("pre-processed Leads {} image".format(x+1))
 				y_counter+=1
-		fig2.savefig('Preprossed_Leads_1-12_figure.png')
+		fig2.savefig('ECG_FILES/Preprossed_Leads_1-12_figure.png')
 
 		#plotting lead 13
 		fig3 , ax3 = plt.subplots()
@@ -141,7 +141,7 @@ class ECG:
 		ax3.imshow(binary_global,cmap='gray')
 		ax3.set_title("Leads 13")
 		ax3.axis('off')
-		fig3.savefig('Preprossed_Leads_13_figure.png')
+		fig3.savefig('ECG_FILES/Preprossed_Leads_13_figure.png')
 
 
 	def SignalExtraction_Scaling(self,Leads):
@@ -192,12 +192,12 @@ class ECG:
 			Normalized_Scaled=pd.DataFrame(fit_transform_data[:,0], columns = ['X'])
 			Normalized_Scaled=Normalized_Scaled.T
 			#scaled_data to CSV
-			if (os.path.isfile('scaled_data_1D_{lead_no}.csv'.format(lead_no=lead_no+1))):
-				Normalized_Scaled.to_csv('Scaled_1DLead_{lead_no}.csv'.format(lead_no=lead_no+1), mode='a',index=False)
+			if (os.path.isfile('ECG_FILES/scaled_data_1D_{lead_no}.csv'.format(lead_no=lead_no+1))):
+				Normalized_Scaled.to_csv('ECG_FILES/Scaled_1DLead_{lead_no}.csv'.format(lead_no=lead_no+1), mode='a',index=False)
 			else:
-				Normalized_Scaled.to_csv('Scaled_1DLead_{lead_no}.csv'.format(lead_no=lead_no+1),index=False)
+				Normalized_Scaled.to_csv('ECG_FILES/Scaled_1DLead_{lead_no}.csv'.format(lead_no=lead_no+1), index=False)
 	      
-		fig4.savefig('Contour_Leads_1-12_figure.png')
+		fig4.savefig('ECG_FILES/Contour_Leads_1-12_figure.png')
 
 
 	def CombineConvert1Dsignal(self):
@@ -206,14 +206,16 @@ class ECG:
 		returns the final dataframe
 		"""
 		#first read the Lead1 1D signal
-		test_final=pd.read_csv('Scaled_1DLead_1.csv')
-		location= os.getcwd()
+		test_final = pd.read_csv('ECG_FILES/Scaled_1DLead_1.csv')
+		location = os.getcwd()+"/ECG_FILES/"
 		print(location)
+		#print(natsorted(os.listdir(location)))
 		#loop over all the 11 remaining leads and combine as one dataset using pandas concat
 		for files in natsorted(os.listdir(location)):
+			#print(files)
 			if files.endswith(".csv"):
 				if files!='Scaled_1DLead_1.csv':
-					df=pd.read_csv('{}'.format(files))
+					df = pd.read_csv('{}'.format("ECG_FILES/"+files))
 					test_final=pd.concat([test_final,df],axis=1,ignore_index=True)
 
 		return test_final

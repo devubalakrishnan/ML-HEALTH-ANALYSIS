@@ -1,6 +1,9 @@
 from cmath import e
+from datetime import datetime
 from errno import EEXIST
+from multiprocessing import context
 from unicodedata import name
+from unittest import result
 from django.contrib.auth.decorators import login_required
 from ast import Return
 from asyncio.windows_events import NULL
@@ -12,8 +15,9 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .utilis import get_intent,symptoms,predict_disease,precautionDictionary,description, predict_diabetes
 from healthApp.randgenerator import rand
-from .models import Usersymptoms,symptoms as Symptoms
+from .models import Checkup, Profile, Usersymptoms,symptoms as Symptoms
 import pickle
+from .pedigree import Pedigree
 from .Ecg import  ECG
 #intialize ecg object
 
@@ -29,6 +33,29 @@ def home(request):
     content={"name":"devu","symptoms":symptoms}
     return render(request, 'healthica/homepage.html',content)
     #return HttpResponse('<h1>hello</h1>')
+
+def dashboard_patient(request,patient_id):
+    patient=Profile.objects.get(p_id=patient_id)
+    context={
+        'patient_id':patient.p_id,
+        'patient':patient
+    }
+    
+    return render(request,"dashboard-patient.html",context)
+
+def create_checkup(request,details,type):
+    patient=Profile.objects.get(patient=request.user)
+    details=json.dumps(details)
+    chkup_id=patient.get_checkup_id()
+    if type=='HEART DISEASE':
+        image=request.FILES['ecg']
+        checkup = Checkup(checkup_id=chkup_id, checkup_user=patient, checkup_date=datetime.now(
+        ), checkup_details=details, checkup_type=type,scan_path=image)
+        checkup.save()
+        return checkup
+    checkup=Checkup(checkup_id=chkup_id,checkup_user=patient,checkup_date=datetime.now(),checkup_details=details,checkup_type=type)
+    checkup.save()
+    return checkup
 
 def get_response(request,intent,session):
     response=''
@@ -77,6 +104,9 @@ def predict(request):
     res,checkupid=get_response(request,intent,text)
     if(res[0]=="disease"):
         message = {"reply": res[1], "checkup_ID": checkupid}
+        user_symptoms = Usersymptoms.objects.get(check_up_id=checkupid)
+        details={'symptoms':[item.symptom_name for item in user_symptoms.my_symptoms.all()],'result':res[1]}
+        create_checkup(request, details, 'SYMPTOMS CHECK')
     else:
         message={"reply":res,"checkup_ID":checkupid}
     return HttpResponse(json.dumps(message), content_type='application/json')
@@ -85,8 +115,9 @@ def predict(request):
 
 
 def diabetes_view(request):
-    return render(request, 'diabeticform.html')
+    return render(request, 'diabeticform.html',{'age':request.user.profile.age})
 
+@login_required
 def diabetes(request):
     if request.method=="POST":
         Glucoselevel=request.POST.get('Glucose Level')
@@ -94,7 +125,14 @@ def diabetes(request):
         bmi=request.POST.get('BMI')
         DiabetesPF=request.POST.get('Diabetes PF')
         Age=request.POST.get('Age')
-        r=predict_diabetes(request)#)
+        r,pred=predict_diabetes(request)#)
+        details = {key:x for key, x in request.POST.items() if key != "csrfmiddlewaretoken"}
+        if pred==1:
+            result = "Chances of having Diabetes is more."
+        else:
+            result = "No Worries!!! You don't have Diabetes."
+        details["results"]=result
+        create_checkup(request, details, 'DIABETES')
         return r
         #en.save()
         #return render(request,'result.html'
@@ -151,11 +189,33 @@ def heartdisease(request):
             """#### **PASS TO PRETRAINED ML MODEL FOR PREDICTION**"""
             #call the Pretrainsed ML model for prediction
             ecg_model=ecg.ModelLoad_predict(ecg_final)
+            details={'result':ecg_model}
+            create_checkup(request, details, 'HEART DISEASE')
             return render(request,'heartdisease.html',{'prediction':ecg_model})
     else:
         return render(request,'heartdisease.html')
 
 
+@csrf_exempt
+def pedigree(request):
+    data = json.loads(request.body)
+    for keys,vals in data.items():
+        if vals=="yes":
+            data[keys]=True
+        else:
+            data[keys]=False
+    #print(data)
+    p = Pedigree(data["grandp_f"], data["grandp_m"], data["diabetic_father"], data["diabetic_mother"],
+                 request.user.profile.sex.upper(), data["siblings"])
+    p.get_parent_chromosomes()
+    p.offsprings = p.punnet_square('disease-allele')
+    p.has_diabetic_siblings()
+    p.offsprings_xlinked = p.punnet_square('x-linked')
+    p.determine_type_probab()
+    p.x_linked_probablity()
+
+    pedigree={"pedigree":p.probablity}
+    return HttpResponse(json.dumps(pedigree), content_type='application/json')
 
 
 
