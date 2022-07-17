@@ -19,6 +19,11 @@ from .models import Checkup, Profile, Usersymptoms,symptoms as Symptoms
 import pickle
 from .pedigree import Pedigree
 from .Ecg import  ECG
+from django.template.loader import get_template
+from io import BytesIO
+from xhtml2pdf import pisa
+import os
+
 #intialize ecg object
 
 #from .models import predict_diabetes
@@ -219,8 +224,41 @@ def pedigree(request):
 
 
 
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html  = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)#, link_callback=fetch_resources)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
 
 
+
+def PDF(request):
+
+    data = {
+            'name': "Devu",
+            'disease': "heartdisease" ,
+            'email': "devubalakrishnan@yahoo.com",
+            'date':"12/3/22" ,
+        
+        }
+    pdf = render_to_pdf('reportpdf.html', data)
+
+    if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "reportpdf_%s.pdf" %(data['name'])
+            content = "inline; filename='%s'" %(filename)
+            #download = request.GET.get("download")
+            #if download:
+            content = "attachment; filename=%s" %(filename)
+            response['Content-Disposition'] = content
+            return response
+    return HttpResponse("Not found")
+
+
+ 
 
 
 
