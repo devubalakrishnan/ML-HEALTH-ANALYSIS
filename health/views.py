@@ -250,15 +250,19 @@ def render_to_pdf(template_src, context_dict={}):
 
 
 
-def PDF(request):
-
+def PDF(request,checkup_id):
+    checkup= Checkup.objects.get(checkup_id=checkup_id)
     data = {
-            'name': "Devu",
-            'disease': "heartdisease" ,
-            'email': "devubalakrishnan@yahoo.com",
-            'date':"12/3/22" ,
-        
-        }
+        'patient_name':checkup.checkup_user,
+        'checkup_date':checkup.checkup_date,
+        'checkup_type' :checkup.checkup_type,
+        'checkup_details' :json.loads(checkup.checkup_details),
+        'is_verified':checkup.is_verified,
+        'verified_by':checkup.verified_by
+
+    }
+    
+
     pdf = render_to_pdf('reportpdf.html', data)
     return HttpResponse(pdf, content_type='application/pdf')
     #if pdf:

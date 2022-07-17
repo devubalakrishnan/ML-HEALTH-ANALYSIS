@@ -396,7 +396,7 @@
 		<div class="modal-body">
 			<div class="row justify-content-between">
 				<div class="col-md-7 col-12">
-					<h4>Test Name - Neck Scan</h4>
+					<h4>Test name - {{checkup_type}}</h4>
 				</div>
 				<div class="col-md-5 col-12">
 					<h4 class="text-end">Checkup Id : L0000002821</h4>
@@ -412,11 +412,14 @@
 						</tr>
 					</thead>
 					<tbody>
+                     {%for key,value in checkup_details.items%}
 						<tr>
-							<td>Swelling Diameter</td>
-							<td>45 - 1000</td>
+							<td>{{key}}</td>
+							<td>{{value}}</td>
 							<td>&nbsp;</td>
 						</tr>
+						{%endfor%}
+
 						<tr>
 							<td>&nbsp;</td>
 							<td>&nbsp;</td>
@@ -433,14 +436,14 @@
 				<table class="table">
 					<tbody>
 						<tr>
-							<th colspan="2" class="b-0">Test By</th>
-							<th colspan="2" class="b-0">Signed By</th>
+							<th colspan="2" class="b-0">Patient name</th>
+							<th colspan="2" class="b-0">verified By</th>
 						</tr>
 						<tr class="bg-secondary">
-							<td>Donald jr</td>
-							<td>Time : 11-8-2017 04:22</td>
-							<td>Lous Clark</td>
-							<td>Time : 11-8-2017 04:22</td>
+							<td>{{patient_name}}</td>
+							<td>Time:{{checkup_date}}</td>
+							<td>{{verified_by}}</td>
+							<td></td>
 						</tr>
 					</tbody>
 				</table>

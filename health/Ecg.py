@@ -244,10 +244,10 @@ class ECG:
 		print("final_df 2=",final_df)
 		result = loaded_model.predict(final_df)
 		if result[0] == 1:
-			return "You ECG corresponds to Myocardial Infarction"
+			return "Your ECG corresponds to Myocardial Infarction"
 		elif result[0] == 0:
-			return "You ECG corresponds to Abnormal Heartbeat"
+			return "Your ECG corresponds to Abnormal Heartbeat"
 		elif result[0] == 2:
 			return "Your ECG is Normal"
 		else:
-			return "You ECG corresponds to History of Myocardial Infarction"
+			return "Your ECG corresponds to History of Myocardial Infarction"

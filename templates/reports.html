@@ -1,6 +1,7 @@
 {%extends 'dash-theme.html'%}
 {%load static%}
 {%block details%}
+
 <style>
     .content-wrapper{
         margin-left: 10rem;
@@ -39,11 +40,11 @@
                                         <tr>
                                             <th class="bb-2">No.</th>
                                             <th class="bb-2">Test</th>
-                                            <th class="bb-2">Lab</th>
-                                            <th class="bb-2">Priority</th>
+                                            <th class="bb-2">Date</th>
+                                            
 
-                                            <th class="bb-2">Handling</th>
-                                            <th class="bb-2">Coll. By</th>
+                                            <th class="bb-2">checkup user</th>
+                                            
                                             <th class="bb-2">Status</th>
                                             <th class="bb-2">Result</th>
                                             <th class="bb-2">Signed</th>
@@ -52,24 +53,29 @@
                                     <tbody>
                                         <!--for here-->
                                         <tr>
-                                            <td>1</td>
-                                            <td>Blood Count</td>
-                                            <td>Microbiology</td>
-                                            <td><span class="badge badge-warning">Law</span></td>
-                                            <td>Johen Doe</td>
-                                            <td>5.45pm 11/05</td>
+                                            {%for checkup in checkups%}
+                
+
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{checkup.checkup_type}}</td>
+                                            <td>{{checkup.checkup_date}}</td>
+            
+                                            <td>{{checkup.checkup_id}}</td>
+                                            
                                             <td><span class="badge badge-success">Result Added</span></td>
                                             <td>
                                                 <a href="#" data-bs-toggle="modal" data-bs-target="#result"
                                                     class="text-info">Result </a>
 
                                             </td>
-                                            
-                                            <td style="  text-align: center;">
-                                                <img src="{% static 'media/img/check.png'%}" width="20px" alt="">
+
+                                            <td style="  text-align: center;
+                                      ">
+                                                <img src="{%static 'media/img/check.png'%}" width="20px" alt="">
                                             </td>
                                         </tr>
-                                       <!--end for her-->
+                                        {%endfor%}
+     
                                     </tbody>
                                 </table>
                             </div>
