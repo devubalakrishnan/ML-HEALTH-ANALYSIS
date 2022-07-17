@@ -1,6 +1,5 @@
 from cmath import e
 from datetime import datetime
-from errno import EEXIST
 from multiprocessing import context
 from unicodedata import name
 from unittest import result
@@ -8,9 +7,9 @@ from django.contrib.auth.decorators import login_required
 from ast import Return
 from asyncio.windows_events import NULL
 from cgitb import text
-from email.mime import message
+from django.contrib import messages
 import json
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .utilis import get_intent,symptoms,predict_disease,precautionDictionary,description, predict_diabetes
@@ -41,13 +40,25 @@ def home(request):
 
 def dashboard_patient(request,patient_id):
     patient=Profile.objects.get(p_id=patient_id)
+    checkup=patient.checkups.all()[:3]
     context={
         'patient_id':patient.p_id,
-        'patient':patient
+        'patient':patient,
+        'checkups':checkup
     }
     
     return render(request,"dashboard-patient.html",context)
+def reports(request,patient_id):
+    patient = Profile.objects.get(p_id=patient_id)
+    checkup = patient.checkups.all()
+    context = {
+        'patient_id': patient.p_id,
+        'patient': patient,
+        'checkups': checkup
+    }
+    return render(request, "reports.html", context)
 
+    
 def create_checkup(request,details,type):
     patient=Profile.objects.get(patient=request.user)
     details=json.dumps(details)
@@ -151,7 +162,11 @@ def heartdisease(request):
         #intialize ecg object
         ecg = ECG()
         #get the uploaded image
-        uploaded_file = request.FILES['ecg']
+        try:
+            uploaded_file = request.FILES['ecg']
+        except KeyError:
+            messages.error(request,f'No file was uploaded!')
+            return redirect('ecg')
         if uploaded_file is not None:
             """#### **UPLOADED IMAGE**"""
             # call the getimage method

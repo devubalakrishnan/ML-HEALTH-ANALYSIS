@@ -1,0 +1,16 @@
+.weight h4 {
+    font-family: 'Roboto Condensed', sans-serif !important;
+    font-weight: bold;
+    margin: 15px 0px 0px 10px;
+}
+.currentw,.wtext{
+    font-size: 10px !important;
+    color: rgb(124, 124, 124) !important;
+    position: relative;
+    left: 10px;
+}
+.wtext{
+    display: inline-block;
+    right: 0;
+    margin-left: 40%;
+}

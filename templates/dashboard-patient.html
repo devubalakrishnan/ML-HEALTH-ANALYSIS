@@ -1,8 +1,57 @@
 {%extends 'dash-theme.html'%}
 {%load static%}
 {%block details%}
+
 <div class="row">
-    <div class="col-md-4 offset-md-8">
+    <div class="col-md-8">
+        <div class="box">
+            <div class="box-header">
+                <h4 class="box-title">Recent Checkups</h4>
+            </div>
+            <div class="box-body">
+                <div class="news-slider owl-carousel owl-sl">
+                    
+                    {% for checkup in checkups %}
+                    <div>
+                        <div class="d-flex align-items-center mb-10">
+                            <div class="d-flex flex-column flex-grow-1 fw-500">
+                                <p class="hover-primary text-fade mb-1 fs-14">#{{checkup.checkup_id}}</p>
+                                <span class="text-dark fs-16">{{checkup.get_checkup_type}}</span>
+                                <p class="mb-0 fs-14">{{checkup.checkup_date}}<span class="badge badge-dot badge-primary"></span></p>
+                            </div>
+                            <div>
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" href="#" class="base-font mx-30"><i
+                                            class="ti-more-alt text-muted"></i></a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a class="dropdown-item" href="#"><i class="ti-import"></i> Import</a>
+                                        <a class="dropdown-item" href="#"><i class="ti-export"></i> Export</a>
+                                        <a class="dropdown-item" href="#"><i class="ti-printer"></i> Print</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#"><i class="ti-settings"></i> Settings</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-end py-10">
+                            <div>
+                                <a href="#" class="waves-effect waves-light btn btn-sm btn-primary-light">Details</a>
+                                <a href="#" class="waves-effect waves-light btn btn-sm btn-primary-light">Contact
+                                    Patient</a>
+                            </div>
+                            <div>
+                                <a href="#" class="waves-effect waves-light btn btn-sm btn-primary-light"><i
+                                        class="fa fa-check"></i> Archive</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
         <div class="box">
             <div class="box-header">
                 <h4 class="box-title">Current Vitals</h4>
@@ -56,5 +105,19 @@
             </div>
         </div>
     </div>
+    
 </div>
+<div class="row">
+    <div class="col-md-2 offset-md-10">
+        <div class="box weight">
+            <h4>{{patient.weight}} kg<span class="wtext">weight</span></h4>
+            <span class="currentw">+10kg</span>
+            {%include 'weight.html'%}
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.min.js"> </script>
+<script src="{%static 'js/chart.js'%}"></script>
+<script>get_data([67, 72, 68, 67, 67.8, 71])</script>
+
 {%endblock%}

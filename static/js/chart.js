@@ -1,37 +1,39 @@
 const ctx = document.getElementById('myChart').getContext('2d');
-const glucose = document.getElementById('glucose').getContext('2d');
+//const glucose = document.getElementById('glucose').getContext('2d');
 let const_data=[12, 19, 3, 5, 2, 3]
 function get_data(raw){
     const_data=raw;
+    colors=[]
+    
+    var gradient = ctx.createLinearGradient(0, 0, 0, 90);
+    gradient.addColorStop(0, 'rgba(247,215,3,1)');
+    gradient.addColorStop(1, 'rgba(254,156,0,1)');
+    for (i = 0; i < const_data.length; i++) {
+        colors[i] =gradient;
 
+    }
 const myChart = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
         datasets: [{
             label: 'your weight',
+            minBarLength: 8,
             data: const_data,
-            backgroundColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
+            backgroundColor: colors,
             
     
         }]
     },
     options: {
-        
+        maintainAspectRatio: false,
                 responsive: true,
             }
         }
     
     );
     }
-
+/*
     const myglucose = new Chart(glucose, {
         type: 'line',
         data: {
@@ -52,4 +54,4 @@ const myChart = new Chart(ctx, {
                 }
             }
         
-        );
+        );*/

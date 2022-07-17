@@ -1,34 +1,67 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
-        <link rel="stylesheet" href="{%static 'styles/css/vendors_css.css'%}">
-        
-        <!-- Style-->
-        <link rel="stylesheet" href="{%static 'styles/css/style.css'%}">
-        <link rel="stylesheet" href="{%static 'styles/css/skin_color.css'%}">
+    <link rel="stylesheet" href="{% static 'styles/toast.css'%}">
+    <link rel="stylesheet" href="{%static 'styles/drop.css'%}">
+    <!--Stylesheet-->
+    <style>
+        .spacer{
+        margin-top: 150px;
+    }
+    .image img{
+        width: 80%;
+        margin: 63px 15% auto;
+    }
+    .row>* {
+        width: 50% !important;
+    }
+    </style>
 </head>
 <body>
-    <div class="box">
-        <div class="box-header">
-            <h4 class="box-title">Dropzone</h4>
-            <h6 class="box-subtitle">For multiple file upload put class <code>.dropzone</code> to form.</h6>
+    {%include 'navbar.html'%}
+    {%include 'toast.html' %}
+    <div class="spacer"></div>
+    <div class="row">
+        <div class="image">
+            <img src="{%static 'media/img/heart-dis.png'%}" alt="">
         </div>
-        <div class="box-body">
-            <form action="#" method="post" enctype="multipart/form-data" class="dropzone">
+        <div class="container2">
+            <form action="" method="post" enctype="multipart/form-data">
                 {%csrf_token%}
-                <div class="fallback">
-                    <input type="file" name="ecg" id="" accept="image/*">
-                    <input type="submit">
+                <figure class="image-container">
+                    <img id="chosen-image">
+                    <figcaption id="file-name"></figcaption>
+                </figure>
+                <input type="file" name="ecg" id="upload-button" accept="image/*">
+        
+        
+                <div class="row results">
+                    <div class="col">
+                        <label for="upload-button">
+                            <i class="fas fa-upload"></i> &nbsp; Choose A Photo
+                        </label>
+                    </div>
+                    <div class="col"><input type="submit" id="sub"></div>
                 </div>
             </form>
         </div>
     </div>
+    <!--Script-->
+    <script src="{%static 'js/drop.js'%}"></script>
     {% if prediction %}
     <h1>{{ prediction}}</h1>
+    {%endif%}
+    <!--Script for toast-->
+    <script src="{%static 'js/toast.js'%}"></script>
+    {%if messages%}
+    {%for message in messages%}
+    <script>showToast('{{message.tags}}', '{{message}}');</script>
+    {%endfor%}
     {%endif%}
 </body>
 </html>
