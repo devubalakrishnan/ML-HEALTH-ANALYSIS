@@ -245,17 +245,17 @@ def PDF(request):
         
         }
     pdf = render_to_pdf('reportpdf.html', data)
-
-    if pdf:
-            response = HttpResponse(pdf, content_type='application/pdf')
-            filename = "reportpdf_%s.pdf" %(data['name'])
-            content = "inline; filename='%s'" %(filename)
+    return HttpResponse(pdf, content_type='application/pdf')
+    #if pdf:
+            #response = HttpResponse(pdf, content_type='application/pdf')
+            #filename = "reportpdf_%s.pdf" %(data['name'])
+            #content = "inline; filename='%s'" %(filename)
             #download = request.GET.get("download")
             #if download:
-            content = "attachment; filename=%s" %(filename)
-            response['Content-Disposition'] = content
-            return response
-    return HttpResponse("Not found")
+            #content = "attachment; filename=%s" %(filename)
+            #response['Content-Disposition'] = content
+            #return response
+    #return HttpResponse("Not found")
 
 
  
