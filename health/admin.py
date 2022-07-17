@@ -19,9 +19,10 @@ class doctor_ad(admin.ModelAdmin):
 
 class patient_ad(admin.ModelAdmin):
     list_display = ('pk', 'p_id', 'patient')
+class checkup_ad(admin.ModelAdmin):
+    list_display=('pk','checkup_id','checkup_user')
 
-
-admin.site.register(Checkup)
+admin.site.register(Checkup,checkup_ad)
 admin.site.register(Doctor,doctor_ad)
 admin.site.register(symptoms,symptomsad)
 admin.site.register(Usersymptoms,usersymp_ad)

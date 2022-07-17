@@ -13,10 +13,18 @@
     <link rel="stylesheet" href="{%static 'styles/css/vendors_css.css'%}">
 
     <!-- Style-->
-
+    <link rel="stylesheet" href="{%static 'styles/dash.css'%}">
     <link rel="stylesheet" href="{%static 'styles/css/style.css'%}">
     <link rel="stylesheet" href="{%static 'styles/css/skin_color.css'%}">
-
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
+         @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+            *{
+                  font-family: 'Poppins', sans-serif;
+            }
+    </style>
+    
 </head>
 
 <body class="sidebar-mini theme-primary fixed">
@@ -191,11 +199,11 @@
                                     <span class="title">Home</span>
                                 </a>
                             <li class="list active">
-                                <a href="#">
+                                <a href="{{patient.dash_url}}/reports">
                                     <span class="icon">
                                         <ion-icon name="person-outline"></ion-icon>
                                     </span>
-                                    <span class="title">Profile</span>
+                                    <span class="title">Reports</span>
                                 </a>
                             </li>
                             <li class="list active">
@@ -244,7 +252,7 @@
        
     </div>
     {{ patient_id|json_script:"room-name" }}
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    
     <script>
         // add active class in selected tab
         const list = document.querySelectorAll('.list');
@@ -257,23 +265,20 @@
         list.forEach((item) => item.addEventListener('click', activeLink));
     </script>
 
-
-
+    
     <!-- Vendor JS -->
+    
     <script src="{%static 'djs/vendors.min.js'%}"></script>
-    <script src="{%static 'djs/pages/chat-popup.js'%}"></script>
-    <script src="{%static 'assets/icons/feather-icons/feather.min.js'%}"></script>
-
-    <script src="{%static 'assets/vendor_components/apexcharts-bundle/dist/apexcharts.js'%}"></script>
-    <script src="{%static 'rawgit.com/nnnick/Chart.js/v1.0.2/Chart.min.js'%}"></script>
 
     <!-- Doclinic App -->
     <script src=""></script>
     <script src="{%static 'djs/template.js'%}"></script>
     <script src="{%static 'djs/pages/dashboard.js'%}"></script>
+    <script src="{%static 'assets/vendor_components/OwlCarousel2/dist/owl.carousel.js'%}"></script>
+    <script src="{%static 'djs/pages/dashboard2.js'%}"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-
-
+    <script src="{%static 'assets/vendor_components/apexcharts-bundle/dist/apexcharts.js'%}"></script>
+    
 </body>
 
 </html>

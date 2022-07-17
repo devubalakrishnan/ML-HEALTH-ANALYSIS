@@ -9,6 +9,7 @@ urlpatterns = [
     path('predict', views.predict, name='predict'),
     path('home',views.home,name='home'),
     path('<str:patient_id>/dashboard/PT',views.dashboard_patient,name='patient-dash'),
+    path('<str:patient_id>/dashboard/PT/reports',views.reports, name='patient-reports'),
     path('diabetes-predict', views.diabetes_view, name='diabetes-predict'),
     path('diabetes-result', views.diabetes, name='predicteddiabetes'),
     path('pedigree',views.pedigree,name="pedigree"),
