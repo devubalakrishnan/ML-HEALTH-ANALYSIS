@@ -145,7 +145,10 @@ class Checkup(models.Model):
     verified_by = models.ForeignKey(Doctor, on_delete=models.CASCADE,null=True)
     def get_checkup_type(self):
         return self.checkup_type.lower().capitalize()+' Prediction Test'
-
+    def get_checkup_details(self):
+        if self.checkup_details is not None:
+            print(json.loads(self.checkup_details))
+            return json.loads(self.checkup_details)
 
 class Report(models.Model):
     pdf_path=models.CharField(max_length=12)

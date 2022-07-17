@@ -1,7 +1,12 @@
 {%extends 'dash-theme.html'%}
 {%load static%}
 {%block details%}
-
+<style>
+    a::before{content: '' !important;}
+    .med-icons label::after{
+         background-image:url("{%static 'media/img/checked.png'%}");
+    }
+</style>
 <div class="row">
     <div class="col-md-8">
         <div class="box">
@@ -35,7 +40,7 @@
                         </div>
                         <div class="d-flex justify-content-between align-items-end py-10">
                             <div>
-                                <a href="#" class="waves-effect waves-light btn btn-sm btn-primary-light">Details</a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#{{checkup.checkup_id}}" class="waves-effect waves-light btn btn-sm btn-primary-light">Details</a>
                                 <a href="#" class="waves-effect waves-light btn btn-sm btn-primary-light">Contact
                                     Patient</a>
                             </div>
@@ -107,8 +112,118 @@
     </div>
     
 </div>
+
 <div class="row">
-    <div class="col-md-2 offset-md-10">
+    <div class="col-md-8">
+        <!--medicine Here-->
+        <div class="box box-slided-up">
+            <div class="box-header with-border">
+                <h4 class="box-title">Box <strong>slided up</strong></h4>
+                <ul class="box-controls pull-right">
+                    <li>
+                        <box-icon class="" name='x'></box-icon>
+                    </li>
+                    <li><a class="box-btn-slide" href="#">
+                            <box-icon name='chevron-down'></box-icon>
+                        </a></li>
+                    <li><a class="box-btn-fullscreen" href="#"></a></li>
+                </ul>
+            </div>
+        
+            <div class="box-body">
+                <div class="box-body">
+                   
+                <form class="boxed" method="post" name="medform">
+                    <div class="med-icons">
+                        <input type="radio" id="pill" name="medicon" value="pill">
+                        <label for="pill">
+                            <img src="{%static 'media/img/pills.png'%}">
+                        </label>
+                        <input type="radio" id="tablet" name="medicon" value="tablet">
+                        <label for="tablet">
+                            <img src="{%static 'media/img/tablets.png'%}">
+                        </label>
+                
+                        <input type="radio" id="syringe" name="medicon" value="syringe">
+                        <label for="syringe">
+                            <img src="{%static 'media/img/syringe.png'%}">
+                        </label>
+                        <input type="radio" id="syrup" name="medicon" value="syrup">
+                        <label for="syrup">
+                            <img src="{%static 'media/img/syrup.png'%}">
+                        </label>
+                    </div>
+                    <div class="med-details">
+                        <div class="fields">
+                            <input type="text" value="" placeholder="Medcine Name">
+                        </div>
+                        <div class="fields">
+                            <div class="column">
+                                <div class="some">
+                                    <label for="dose">Dose</label>
+                                </div>
+                                <input type="text" name="dose">
+                                <span class="unit">mg</span>
+                            </div>
+                            <div class="column">
+                                <div class="some">
+                                    <label for="med_type">Type</label>
+                                </div>
+                                <select class="med" name="med_type" id="type">
+                                    <option id="pill2" value="pills">Pill</option>
+                                    <option id="tablet2" value="tablet">Tablet</option>
+                                    <option id="syringe2" value="syringe">Syringe</option>
+                                    <option id="syrup2" value="syrup">Syrup</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="fields">
+                            <div class="column">
+                                <div class="some">
+                                    <label for="intake">Intake</label>
+                                </div>
+                                <select class="med" name="intake">
+                                    <option value="BEFORE FOOD">BEFORE FOOD</option>
+                                    <option value="AFTER FOOD">AFTER FOOD</option>
+                                </select>
+                            </div>
+                            <div class="column">
+                                <div class="some">
+                                    <label for="slot">slot</label>
+                                </div>
+                                <select class="med" name="slot" id="slot">
+                                    <option value="MORNING">MORNING</option>
+                                    <option value="LUNCH">LUNCH</option>
+                                    <option value="DINNER">DINNER</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <br><br>
+                    <input type="submit" class="med-sub" value="SUBMIT">
+                </form>
+                <script>
+                    const icons = document.querySelectorAll(".med-icons input");
+                    const unit = document.querySelector(".unit");
+                    icons.forEach(element => {
+                        element.addEventListener('change', (e) => {
+                            let t_val = e.target.value;
+                            if (t_val == 'pill' || t_val == 'tablet')
+                                unit.innerText = 'mg'
+                            else
+                                unit.innerText = 'ml'
+                            let tid = '#' + t_val + '2';
+                            let type = document.querySelector(tid);
+                            type.selected = true;
+                        })
+                    });
+                </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 offset-md-2">
         <div class="box weight">
             <h4>{{patient.weight}} kg<span class="wtext">weight</span></h4>
             <span class="currentw">+10kg</span>
@@ -116,6 +231,91 @@
         </div>
     </div>
 </div>
+
+{%for checkup in checkups%}
+<!--Model Popup Area-->
+<!-- result modal content -->
+<div class="modal fade" id="{{checkup.checkup_id}}">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="result-popup">Radiology Investigations - Result</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-between">
+                    <div class="col-md-7 col-12">
+                        <h4>Test Name - {{checkup.get_checkup_type}}</h4>
+                    </div>
+                    <div class="col-md-5 col-12">
+                        <h4 class="text-end">Checkup Id : {{checkup.checkup_id}}</h4>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="bg-secondary">
+                            <tr>
+                                <th scope="col">Parameter</th>
+                                <th scope="col">Result</th>
+                                <th scope="col">Range</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for key,val in checkup.get_checkup_details.items%}
+                            {%if key == 'result' or key == 'results'%}
+                            <tr>
+                                <th>{{key}}</th>
+                                <th>{{val}}</th>
+                            </tr>
+                            {%else%}
+                            <tr>
+                                <td>{{key}}</td>
+                                <td>{{val}}</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            {%endif%}
+                            {%endfor%}
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="comment">
+                    <p><span class="fw-600">Comment</span> : <span class="comment-here text-mute">Lorem ipsum dolor sit
+                            amet, consectetur adipisicing elit. </span></p>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th colspan="2" class="b-0">Test By</th>
+                                <th colspan="2" class="b-0">Signed By</th>
+                            </tr>
+                            <tr class="bg-secondary">
+                                <td>Donald jr</td>
+                                <td>Time : 11-8-2017 04:22</td>
+                                <td>Lous Clark</td>
+                                <td>Time : 11-8-2017 04:22</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger pull-right" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info pull-right">Print</button>
+                <button type="button" class="btn btn-success pull-right">Save</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+{%endfor%}
+<!-- /.modal -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.min.js"> </script>
 <script src="{%static 'js/chart.js'%}"></script>
 <script>get_data([67, 72, 68, 67, 67.8, 71])</script>

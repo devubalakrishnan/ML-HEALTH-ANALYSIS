@@ -1,4 +1,5 @@
 {%extends 'dash-theme.html'%}
+{%load static%}
 {%block details%}
 <style>
     .content-wrapper{
@@ -49,6 +50,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <!--for here-->
                                         <tr>
                                             <td>1</td>
                                             <td>Blood Count</td>
@@ -62,121 +64,12 @@
                                                     class="text-info">Result </a>
 
                                             </td>
-                                            <td style="  text-align: center;
-                                      ">
-                                                <img src="check.png" width="20px" alt="">
+                                            
+                                            <td style="  text-align: center;">
+                                                <img src="{% static 'media/img/check.png'%}" width="20px" alt="">
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>CMS</td>
-                                            <td>Microbiology</td>
-                                            <td><span class="badge badge-danger">High</span></td>
-                                            <td>Johen Doe</td>
-                                            <td>5.45pm 11/05</td>
-                                            <td><span class="badge badge-success">Result Added</span></td>
-                                            <td>
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#result"
-                                                    class="text-info">Result </a>
-
-                                            </td>
-
-                                            <td style="  text-align: center;
-                                        ">
-                                                <img src="check.png" width="20px" alt="">
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>Covid</td>
-                                            <td>Microbiology</td>
-                                            <td><span class="badge badge-warning">Law</span></td>
-                                            <td>Johen Doe</td>
-                                            <td>5.45pm 11/05</td>
-                                            <td><span class="badge badge-success">Result Added</span></td>
-                                            <td>
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#result"
-                                                    class="text-info">Result </a>
-
-                                            </td>
-                                            <td style="  text-align: center;
-                                      ">
-                                                <img src="check.png" width="20px" alt="">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>Urin</td>
-                                            <td>Microbiology</td>
-                                            <td><span class="badge badge-danger">High</span></td>
-                                            <td>Johen Doe</td>
-                                            <td>5.45pm 11/05</td>
-                                            <td><span class="badge badge-success">Result Added</span></td>
-                                            <td>
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#result"
-                                                    class="text-info">Result </a>
-
-                                            </td>
-                                            <td style="  text-align: center;
-                                      ">
-                                                <img src="check.png" width="20px" alt="">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>5</td>
-                                            <td>Blood Count</td>
-                                            <td>Microbiology</td>
-                                            <td><span class="badge badge-danger">High</span></td>
-                                            <td>Johen Doe</td>
-                                            <td>5.45pm 11/05</td>
-                                            <td><span class="badge badge-success">Result Added</span></td>
-                                            <td>
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#result"
-                                                    class="text-info">Result </a>
-
-                                            </td>
-                                            <td style="  text-align: center;
-                                      ">
-                                                <img src="check.png" width="20px" alt="">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>6</td>
-                                            <td>HB</td>
-                                            <td>Microbiology</td>
-                                            <td><span class="badge badge-warning">Law</span></td>
-                                            <td>Johen Doe</td>
-                                            <td>5.45pm 11/05</td>
-                                            <td><span class="badge badge-success">Result Added</span></td>
-                                            <td>
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#result"
-                                                    class="text-info">Result </a>
-
-                                            </td>
-                                            <td style="  text-align: center;
-                                      ">
-                                                <img src="check.png" width="20px" alt="">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>7</td>
-                                            <td>MD</td>
-                                            <td>Microbiology</td>
-                                            <td><span class="badge badge-warning">Law</span></td>
-                                            <td>Johen Doe</td>
-                                            <td>5.45pm 11/05</td>
-                                            <td><span class="badge badge-success">Result Added</span></td>
-                                            <td>
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#result"
-                                                    class="text-info">Result </a>
-
-                                            </td>
-                                            <td style="  text-align: center;
-                                      ">
-                                                <img src="check.png" width="20px" alt="">
-                                            </td>
-                                        </tr>
+                                       <!--end for her-->
                                     </tbody>
                                 </table>
                             </div>

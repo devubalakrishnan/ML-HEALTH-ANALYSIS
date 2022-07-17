@@ -40,7 +40,7 @@ def home(request):
 
 def dashboard_patient(request,patient_id):
     patient=Profile.objects.get(p_id=patient_id)
-    checkup=patient.checkups.all()[:3]
+    checkup=patient.checkups.all()[2:5]
     context={
         'patient_id':patient.p_id,
         'patient':patient,
@@ -58,7 +58,7 @@ def reports(request,patient_id):
     }
     return render(request, "reports.html", context)
 
-    
+
 def create_checkup(request,details,type):
     patient=Profile.objects.get(patient=request.user)
     details=json.dumps(details)

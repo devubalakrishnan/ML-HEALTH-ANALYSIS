@@ -1990,14 +1990,6 @@ Theme Primary Color
 .theme-primary [type=radio].with-gap:checked + label:after {
   background-color: #4187f6;
   z-index: 0; }
-.theme-primary [type=radio]:checked + label:after {
-  border: 2px solid #4187f6;
-  background-color: #4187f6;
-  z-index: 0; }
-.theme-primary [type=checkbox].filled-in.tabbed:checked:focus + label:after {
-  border-color: #4187f6;
-  background-color: #4187f6; }
-
 /*---Calender---*/
 .theme-primary .fx-element-overlay .fx-card-item .fx-card-content a:hover {
   color: #4187f6; }
