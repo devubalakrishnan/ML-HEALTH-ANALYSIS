@@ -35,9 +35,11 @@ def home(request):
 
 def dashboard_patient(request,patient_id):
     patient=Profile.objects.get(p_id=patient_id)
+    checkup=patient.checkups.all()[:3]
     context={
         'patient_id':patient.p_id,
-        'patient':patient
+        'patient':patient,
+        'checkups':checkup
     }
     
     return render(request,"dashboard-patient.html",context)

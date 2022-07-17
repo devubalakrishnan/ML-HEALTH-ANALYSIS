@@ -163,20 +163,7 @@ $(function () {
 					]
 				};
 
-				var ctx = document.getElementById("ecg").getContext("2d");
-				myLineChart = new Chart(ctx).Line(data, {
-					animation: false,
-					datasetFill: false,
-					pointDot: false,
-					datasetStrokeWidth: 2,
-					showTooltips: false,
-					scaleOverride: true,
-					scaleSteps: 12,
-					scaleStepWidth: 5,
-					scaleStartValue: 30,
-					scaleShowVerticalLines: false,
-					scaleShowLabels: false,
-				});
+				
 
 				animationStep = 0;
 			}

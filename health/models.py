@@ -143,6 +143,8 @@ class Checkup(models.Model):
     is_verified = models.BooleanField(default=False)
     scan_path = models.ImageField(upload_to='ecg scan',null=True)
     verified_by = models.ForeignKey(Doctor, on_delete=models.CASCADE,null=True)
+    def get_checkup_type(self):
+        return self.checkup_type.lower().capitalize()+' Prediction Test'
 
 
 class Report(models.Model):
