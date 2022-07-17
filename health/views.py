@@ -48,7 +48,17 @@ def dashboard_patient(request,patient_id):
     }
     
     return render(request,"dashboard-patient.html",context)
+def reports(request,patient_id):
+    patient = Profile.objects.get(p_id=patient_id)
+    checkup = patient.checkups.all()
+    context = {
+        'patient_id': patient.p_id,
+        'patient': patient,
+        'checkups': checkup
+    }
+    return render(request, "reports.html", context)
 
+    
 def create_checkup(request,details,type):
     patient=Profile.objects.get(patient=request.user)
     details=json.dumps(details)
