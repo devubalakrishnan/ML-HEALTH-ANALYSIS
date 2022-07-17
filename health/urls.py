@@ -14,7 +14,8 @@ urlpatterns = [
     path('diabetes-result', views.diabetes, name='predicteddiabetes'),
     path('pedigree',views.pedigree,name="pedigree"),
     path('heart-disease',views.heartdisease, name='ecg'),
-    path('testpdf',views.PDF,name="test")
+    path('testpdf',views.PDF,name="test"),
+    path('<str:checkup_id>/reports',views.PDF, name='pdfcheckup')
     #path('save-symp',update_symptoms,name='symptoms-update'),
 ]
 
