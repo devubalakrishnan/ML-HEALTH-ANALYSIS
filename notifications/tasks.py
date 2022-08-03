@@ -18,7 +18,8 @@ def medicine_notification(self,data):
         prescription=medicine_prescription.objects.filter(id=int(data))
         if len(prescription)>0:
             prescription=prescription.first()
-            userid = prescription.intake_user.p_id
+            patient = prescription.intake_user
+            userid = patient.p_id
             channel_layer=get_channel_layer()
             channel_name="medicine-notificaton-%s"%userid
             loop=asyncio.new_event_loop()
@@ -29,7 +30,7 @@ def medicine_notification(self,data):
                     'message': json.dumps(prescription.message)
                 }
             ))
-            track_medicine(prescription=prescription,medicine_date=prescription.send_on.date(),reminder_sent=True).save()
+            track_medicine(prescription=prescription,medicine_date=prescription.send_on.date(),reminder_sent=True,track_for=patient).save()
             #prescription.save()
             return "Done"
         else:

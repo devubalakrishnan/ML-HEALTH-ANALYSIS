@@ -15,7 +15,9 @@ urlpatterns = [
     path('pedigree',views.pedigree,name="pedigree"),
     path('heart-disease',views.heartdisease, name='ecg'),
     path('testpdf',views.PDF,name="test"),
-    path('<str:checkup_id>/reports',views.PDF, name='pdfcheckup')
+    path('<str:patient_id>/reports/<str:checkup_id>',views.PDF, name='pdfcheckup'),
+    path('timesave',views.update_timeslots,name="timesave"),
+    path('updatemedicine',views.update_meds,name="medicine-update")
     #path('save-symp',update_symptoms,name='symptoms-update'),
 ]
 

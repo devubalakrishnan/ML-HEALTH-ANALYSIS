@@ -3,6 +3,8 @@ from distutils.command import upload
 from email import message
 from math import remainder
 from sys import maxsize
+from time import sleep
+from urllib import request
 from xml.parsers.expat import model
 from django.db import models
 from django.contrib.auth.models import User
@@ -16,7 +18,7 @@ class Profile(models.Model):
     patient=models.OneToOneField(User,on_delete=models.CASCADE)
     p_id=models.CharField(max_length=12,null=True)
     username = models.CharField(max_length=12, null=True)
-    email = models.EmailField(max_length=20, null=True)
+    email = models.EmailField(max_length=40, null=True)
     phone = models.PositiveBigIntegerField(null=True)
     fname = models.CharField(max_length=20, null=True)
     lname = models.CharField(max_length=20, null=True)
@@ -37,14 +39,22 @@ class Profile(models.Model):
     def bmi(self):
         BMI = self.weight / (self.height/100)**2
         return round(BMI,2)
-    
+    def get_medicine_time(self,slot):
+        if slot=="BREAK FAST":
+            return self.breakfast
+        elif slot=="LUNCH":
+            return self.lunch
+        elif slot=="DINNER":
+            return self.dinner
     #checkup id genration
     def get_checkup_id(self):
         checkup=self.checkups.all()
         checkup_count=checkup.count()
         checkup_id='CHKUP'+str(checkup_count)
         return checkup_id
-
+    def time_exists(self):
+        if self.breakfast or self.lunch or self.dinner:
+            return True
 #class Doctor(models.Model):
 #class Checkup
 #class disease
@@ -59,6 +69,9 @@ class Doctor(models.Model):
     works_in = models.CharField(max_length=12, null=True)
     sex = models.CharField(max_length=12, null=True)
 
+    def __str__(self):
+        return self.user.username
+
 
 class Medicines(models.Model):
     timeslots=(('BREAK FAST',1),
@@ -67,13 +80,14 @@ class Medicines(models.Model):
               )
     med_type=(('PILLS','PILLS'),
               ('TABLET','TABLET'),
-              ('INJECTION','INJECTION'),
+              ('SYRINGE','SYRINGE'),
               ('SYRUP','SYRUP'))
     medicine_name = models.CharField(max_length=100)
     medicine_type=models.CharField(max_length=30,choices=med_type,default='PILLS')
     dosage=models.FloatField(default=0)
     before_food=models.BooleanField(default=True)
     after_food=models.BooleanField(default= False)
+    capsules = models.IntegerField(null=True)
     time_slot = models.CharField(choices=timeslots, max_length=20)
 
 class medicine_prescription(models.Model):
@@ -85,19 +99,29 @@ class medicine_prescription(models.Model):
     medicines = models.ManyToManyField(Medicines)
     timeslot = models.CharField(choices=timeslots, default=1, max_length=20)
     before_food = models.BooleanField(default=True)
-    send_on=models.DateTimeField()
+    send_on=models.TimeField()
     message = models.TextField(max_length=200, default='Its Time to take your medicine')
-
+    def med_time(self):
+        if self.before_food:
+            string="Before "
+        else:
+            string="After "
+        return string+self.timeslot.lower().capitalize()
+    def med_class(self):
+        if self.slot=="BREAK FAST":
+            cls="badge-warning"
+            if self.before_food:
+                pass
 
 @receiver(post_save, sender=medicine_prescription)
 def notification_handler(sender, instance, created, **kwargs):
     # call group_send function directly to send notificatoions or you can create a dynamic task in celery beat
     if created:
         if instance.before_food:
-            send_time=instance.send_on - timedelta(minutes=30)
+            send_time = datetime.combine(datetime.today(),instance.send_on) - timedelta(minutes=30)
             name=f"medicine-notification-{instance.intake_user.p_id}-{instance.timeslot}-BF"
         else:
-            send_time = instance.send_on + timedelta(minutes=30)
+            send_time = datetime.combine(datetime.today(),instance.send_on) + timedelta(minutes=30)
             name = f"medicine-notification-{instance.intake_user.p_id}-{instance.timeslot}-BF"
 
         schedule, created = CrontabSchedule.objects.get_or_create(hour=send_time.hour, minute=send_time.minute)
@@ -106,6 +130,7 @@ def notification_handler(sender, instance, created, **kwargs):
 
 class track_medicine(models.Model):
     prescription = models.ForeignKey(medicine_prescription, on_delete=models.CASCADE, related_name="track_medicine")
+    track_for=models.ForeignKey(Profile,on_delete=models.CASCADE,null=True)
     medicine_date=models.DateField()
     took_medicines = models.BooleanField(default=False)
     reminder_sent = models.BooleanField(default=False)
@@ -145,10 +170,18 @@ class Checkup(models.Model):
     verified_by = models.ForeignKey(Doctor, on_delete=models.CASCADE,null=True)
     def get_checkup_type(self):
         return self.checkup_type.lower().capitalize()+' Prediction Test'
+
     def get_checkup_details(self):
         if self.checkup_details is not None:
-            print(json.loads(self.checkup_details))
+            #print(json.loads(self.checkup_details))
             return json.loads(self.checkup_details)
+        
+    def get_checkup_link(self):
+        return reverse('pdfcheckup', kwargs={'patient_id':self.checkup_user.p_id,'checkup_id': self.checkup_id})
+    
+    def current(self):
+        return datetime.now()
+
 
 class Report(models.Model):
     pdf_path=models.CharField(max_length=12)

@@ -47,7 +47,7 @@
                                             
                                             <th class="bb-2">Status</th>
                                             <th class="bb-2">Result</th>
-                                            <th class="bb-2">Signed</th>
+                                            <th class="bb-2">Verified</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -64,15 +64,19 @@
                                             
                                             <td><span class="badge badge-success">Result Added</span></td>
                                             <td>
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#result"
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#{{checkup.checkup_id}}"
                                                     class="text-info">Result </a>
 
                                             </td>
-
-                                            <td style="  text-align: center;
-                                      ">
+                                            
+                                            <td style="  text-align: center;">
+                                                {%if checkup.is_verified%}
                                                 <img src="{%static 'media/img/check.png'%}" width="20px" alt="">
+                                                {%else%}
+                                                <img src="{%static 'media/img/remove.png'%}" width="20px" alt="">
+                                                {%endif%}
                                             </td>
+                                            
                                         </tr>
                                         {%endfor%}
      
@@ -89,40 +93,49 @@
     </div>
 </div>
 <!-- /.content-wrapper -->
-
+{%for checkup in checkups%}
 <!--Model Popup Area-->
 <!-- result modal content -->
-<div class="modal fade" id="result">
+<div class="modal fade" id="{{checkup.checkup_id}}">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="result-popup">Radiology Investigations - Result</h4>
+                <h4 class="modal-title" id="result-popup">Checkup - Results</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row justify-content-between">
                     <div class="col-md-7 col-12">
-                        <h4>Test Name - Neck Scan</h4>
+                        <h4>Test Name - {{checkup.get_checkup_type}}</h4>
                     </div>
                     <div class="col-md-5 col-12">
-                        <h4 class="text-end">Lab Order Id : L0000002821</h4>
+                        <h4 class="text-end">Checkup Id : {{checkup.checkup_id}}</h4>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead class="bg-secondary">
                             <tr>
-                                <th scope="col">Test</th>
+                                <th scope="col">Parameter</th>
                                 <th scope="col">Result</th>
                                 <th scope="col">Range</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {%for key,val in checkup.get_checkup_details.items%}
+                            {%if key == 'result' or key == 'results'%}
                             <tr>
-                                <td>Swelling Diameter</td>
-                                <td>45 - 1000</td>
+                                <th>{{key}}</th>
+                                <th>{{val}}</th>
+                            </tr>
+                            {%else%}
+                            <tr>
+                                <td>{{key}}</td>
+                                <td>{{val}}</td>
                                 <td>&nbsp;</td>
                             </tr>
+                            {%endif%}
+                            {%endfor%}
                             <tr>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
@@ -132,7 +145,7 @@
                     </table>
                 </div>
                 <div class="comment">
-                    <p><span class="fw-600">Comment</span> : <span class="comment-here text-mute">Lorem ipsum dolor sit
+                    <p><span class="fw-600">Remarks</span> : <span class="comment-here text-mute">Lorem ipsum dolor sit
                             amet, consectetur adipisicing elit. </span></p>
                 </div>
                 <div class="table-responsive">
@@ -143,10 +156,10 @@
                                 <th colspan="2" class="b-0">Signed By</th>
                             </tr>
                             <tr class="bg-secondary">
-                                <td>Donald jr</td>
-                                <td>Time : 11-8-2017 04:22</td>
-                                <td>Lous Clark</td>
-                                <td>Time : 11-8-2017 04:22</td>
+                                <td>{{checkup.checkup_user}}</td>
+                                <td>{{checkup.checkup_date}}</td>
+                                <td>{{checkup.verified_by}}</td>
+                                <td>{{checkup.current}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -155,7 +168,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger pull-right" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-info pull-right">Print</button>
-                <button type="button" class="btn btn-success pull-right">Save</button>
+                <button type="button" class="btn btn-success pull-right" onclick="location.href='{{checkup.get_checkup_link}}';">Save</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -163,4 +176,5 @@
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+{%endfor%}
 {%endblock%}

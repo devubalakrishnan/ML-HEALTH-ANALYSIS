@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="https://medical-admin-template.multipurposethemes.com/images/favicon.ico">
+    <link rel="icon" href="{%static 'media/images/HEALTHICA.png'%}">
     <title>Document</title>
     <!-- Vendors Style-->
     <link rel="stylesheet" type="text/css" href="{%static 'styles/style1.css'%}">
@@ -17,11 +17,25 @@
     <link rel="stylesheet" href="{%static 'styles/css/style.css'%}">
     <link rel="stylesheet" href="{%static 'styles/css/skin_color.css'%}">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Arimo:wght@500&family=Nunito+Sans:wght@600&family=Roboto+Condensed&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
+    
+        @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@600&family=Roboto+Condensed&display=swap');
          @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
             *{
                   font-family: 'Poppins', sans-serif;
+            }
+            .name h1{
+                font-family: 'Nunito Sans', sans-serif;
+                font-family: 'Roboto Condensed', sans-serif;
+                margin-bottom: 0;
+            }
+            .navbar{
+                justify-content: normal;
+            }
+            .name{
+                margin-right: 50%;
             }
     </style>
     
@@ -49,33 +63,16 @@
                     </li>
                 </ul>
             </div>
+            <div class="name">
+                <h1>Good Morning, {{patient.fname}}!</h1>
+                <span class="btext">
+                    Happiness is nothing more than good health!
+                </span>
+            </div>
 
             <div class="navbar-custom-menu r-side">
                 <ul class="nav navbar-nav">
-                    <!-- User Account-->
-                    <li class="dropdown user user-menu">
-                        <a href="#"
-                            class="waves-effect waves-light dropdown-toggle w-auto l-h-12 bg-transparent p-0 no-shadow"
-                            data-bs-toggle="dropdown" title="User">
-                            <div class="d-flex pt-1">
-                                <div class="text-end me-10">
-                                    <p class="pt-5 fs-14 mb-0 fw-700 text-primary">Johen Doe</p>
-                                    <small class="fs-10 mb-0 text-uppercase text-mute">Admin</small>
-                                </div>
-                                <img src="{%static 'media/images/avatar/avatar-1.png'%}"
-                                    class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" />
-                            </div>
-                        </a>
-                        <ul class="dropdown-menu animated flipInX">
-                            <li class="user-body">
-                                <a class="dropdown-item" href="extra_profile.html"><i
-                                        class="ti-user text-muted me-2"></i>
-                                    Profile</a>
-                                <a class="dropdown-item" href="auth_login.html"><i class="ti-lock text-muted me-2"></i>
-                                    Logout</a>
-                            </li>
-                        </ul>
-                    </li>
+                    
                     <li class="btn-group nav-item d-lg-inline-flex d-none">
                         <a href="#" data-provide="fullscreen"
                             class="waves-effect waves-light nav-link full-screen btn-warning-light" title="Full Screen">
@@ -176,7 +173,7 @@
                         <ul>
                             <div class="d-flex align-items-center logo-box justify-content-start">
                                 <!-- Logo -->
-                                <a href="index.html" class="logo">
+                                <a href="{%url 'home'%}" class="logo">
                                     <!-- logo-->
                                     <div class="logo-mini w-50">
                                         <span class="light-logo"><img src="{%static 'media/images/HEALTHICA.png'%}"
@@ -191,17 +188,17 @@
                                     </div>
                                 </a>
                             </div>
-                            <li class="list active">
-                                <a href="#">
+                            <li class="list active" id="home">
+                                <a href="{{patient.dash_url}}">
                                     <span class="icon">
                                         <ion-icon name="home-outline"></ion-icon>
                                     </span>
-                                    <span class="title">Home</span>
+                                    <span class="title" >Home</span>
                                 </a>
-                            <li class="list active">
+                            <li class="list active"  id="reports">
                                 <a href="{{patient.dash_url}}/reports">
                                     <span class="icon">
-                                        <ion-icon name="person-outline"></ion-icon>
+                                        <ion-icon name="document-outline"></ion-icon>
                                     </span>
                                     <span class="title">Reports</span>
                                 </a>
@@ -209,9 +206,9 @@
                             <li class="list active">
                                 <a href="#">
                                     <span class="icon">
-                                        <ion-icon name="chatbubbles-outline"></ion-icon>
+                                        <ion-icon name="medical-outline"></ion-icon>
                                     </span>
-                                    <span class="title">Messages</span>
+                                    <span class="title">Diagnosis</span>
                                 </a>
                             </li>
                             <li class="list active">
@@ -256,8 +253,13 @@
     <script>
         // add active class in selected tab
         const list = document.querySelectorAll('.list');
+        var cpage=document.getElementById('{{current_page}}');
+        console.log('{{current_page}}');
+        NodeList.prototype.indexOf = Array.prototype.indexOf;
+        ind=list.indexOf(cpage);
+        console.log(ind);
         list.forEach((item) => item.classList.remove('active'));
-        list[0].classList.add('active');
+        list[ind].classList.add('active');
         function activeLink() {
             list.forEach((item) => item.classList.remove('active'));
             this.classList.add('active');
@@ -273,13 +275,14 @@
     <!-- Doclinic App -->
     <script src=""></script>
     <script src="{%static 'djs/template.js'%}"></script>
-    <script src="{%static 'djs/pages/dashboard.js'%}"></script>
+    
     <script src="{%static 'assets/icons/feather-icons/feather.min.js'%}"></script>
     <script src="{%static 'assets/vendor_components/OwlCarousel2/dist/owl.carousel.js'%}"></script>
     <script src="{%static 'djs/pages/dashboard2.js'%}"></script>
+    <script src="https://unpkg.com/boxicons@2.1.2/dist/boxicons.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script src="{%static 'assets/vendor_components/apexcharts-bundle/dist/apexcharts.js'%}"></script>
-    <script src="https://unpkg.com/boxicons@2.1.2/dist/boxicons.js"></script>
+    
 </body>
 
 </html>

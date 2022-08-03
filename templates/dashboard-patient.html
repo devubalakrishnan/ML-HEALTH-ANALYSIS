@@ -42,18 +42,42 @@
                             <div>
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#{{checkup.checkup_id}}" class="waves-effect waves-light btn btn-sm btn-primary-light">Details</a>
                                 <a href="#" class="waves-effect waves-light btn btn-sm btn-primary-light">Contact
-                                    Patient</a>
+                                    Team</a>
                             </div>
-                            <div>
-                                <a href="#" class="waves-effect waves-light btn btn-sm btn-primary-light"><i
-                                        class="fa fa-check"></i> Archive</a>
-                            </div>
+                            
                         </div>
                     </div>
                     {% endfor %}
                     
                 </div>
             </div>
+        </div>
+        <!--
+            {%if patient.time_exists%}
+        <div class="box">
+            <div class="timeslot">
+                <h3>{{patient.breakfast}}</h3>
+                <h3>{{patient.lunch}}</h3>
+            </div>
+        </div>
+        {%endif%}
+        -->
+        
+        <div class="box times">
+            <form action="{%url 'timesave'%}" method="post">
+                {%csrf_token%}
+                <div class="timeslot">
+                    <label>Breakfast Time:<input type="time" class="form-control" name="breakfast" id="bf"></label>
+                
+                    <label>Lunch Time:<input type="time" class="form-control" name="lunch" id="lunch"></label>
+                
+                    <label>Dinner Time:<input type="time" class="form-control" name="dinner" id=""></label>
+                </div>
+                <div>
+                    <input value="submit" style="margin-left: 80%; position:relative;top:-12px;"
+                        class="waves-effect waves-light btn btn-sm btn-primary-light" type="submit">
+                </div>
+            </form>
         </div>
     </div>
     <div class="col-md-4">
@@ -106,7 +130,7 @@
             </div>
             <div class="box-body bg-primary">
                 <img src="{%static 'media/images/smoking.png'%}" alt="" class="float-start me-10">
-                <p>Smoking Status : current every day smoker</p>
+                <p>Smoking Status : Never Smoking</p>
             </div>
         </div>
     </div>
@@ -118,7 +142,7 @@
         <!--medicine Here-->
         <div class="box box-slided-up">
             <div class="box-header with-border">
-                <h4 class="box-title">Box <strong>slided up</strong></h4>
+                <h4 class="box-title">Add <strong>Medicines</strong></h4>
                 <ul class="box-controls pull-right">
                     <li>
                         <box-icon class="" name='x'></box-icon>
@@ -133,7 +157,8 @@
             <div class="box-body">
                 <div class="box-body">
                    
-                <form class="boxed" method="post" name="medform">
+                <form class="boxed" method="post" name="medform" action="{%url 'medicine-update'%}">
+                    {%csrf_token%}
                     <div class="med-icons">
                         <input type="radio" id="pill" name="medicon" value="pill">
                         <label for="pill">
@@ -155,7 +180,7 @@
                     </div>
                     <div class="med-details">
                         <div class="fields">
-                            <input type="text" value="" placeholder="Medcine Name">
+                            <input type="text" value="" placeholder="Medcine Name" name="med-name">
                         </div>
                         <div class="fields">
                             <div class="column">
@@ -192,10 +217,16 @@
                                     <label for="slot">slot</label>
                                 </div>
                                 <select class="med" name="slot" id="slot">
-                                    <option value="MORNING">MORNING</option>
+                                    <option value="BREAK FAST">BREAK FAST</option>
                                     <option value="LUNCH">LUNCH</option>
                                     <option value="DINNER">DINNER</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="fields capsules">
+                            <div class="column">
+                                <span>No of Capsules:</span>
+                                <input type="number" name="caps_no" id="caps">
                             </div>
                         </div>
                     </div>
@@ -222,12 +253,70 @@
                 </div>
             </div>
         </div>
+        <!---->
+        <div class="box">
+            <div class="medshow">
+                {%for prescription  in daily_pres%}
+                <div class="prescription box">
+                    <div class="box-body">
+                        <h2 class="badge-secondary">{{prescription.medicine_date}}</h2>
+                        <span class="badge badge-secondary"><ion-icon name="time" style="margin-bottom: -1px; margin-right: 2px;"></ion-icon>{{prescription.prescription.send_on}}</span>
+                        <span class="badge badge-warning-light">{{prescription.prescription.med_time}}</span>
+                        <div class="">
+                            <div class="row">
+                                <div class="col1">
+                                    <img src="{%static 'media/img/tablets.png'%}" alt="">
+                                </div>
+                                <div class="col dets">
+                                    <h3>Lisinopril</h3>
+                                    <p class="meds">150mg, 1 capsule</p>
+                                    <p>After Breakfast</p>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                        <div class="">
+                            <div class="row">
+                                <div class="col1">
+                                    <img src="{%static 'media/img/pills.png'%}" alt="">
+                                </div>
+                                <div class="col dets">
+                                    <h3>Diuretics</h3>
+                                    <p class="meds">250mg, 1 pill</p>
+                                    <p>After Breakfast</p>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                        <div class="medbtn">
+                            <button><ion-icon name="close"></ion-icon> Skip</button>
+                            <button><ion-icon name="checkmark"></ion-icon> Done </button>
+                        </div>
+                    </div>
+                    
+                </div>
+                {%endfor%}
+            </div>
+        </div>
     </div>
-    <div class="col-md-2 offset-md-2">
-        <div class="box weight">
-            <h4>{{patient.weight}} kg<span class="wtext">weight</span></h4>
-            <span class="currentw">+10kg</span>
-            {%include 'weight.html'%}
+    <div class="col-md-4">
+        <div class="row basics">
+            <div class="col-md-6">
+                <div class="box blood row">
+                    <div class="col"><img src="{%static 'media/img/blood.png'%}" alt=""></div>
+                    <div class="col">
+                        <h3>{{patient.blood_grp}}</h3>
+                        <span class="btext">Blood Group</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="box weight">
+                    <h4>{{patient.weight}} kg<span class="wtext">weight</span></h4>
+                    <span class="currentw">+10kg</span>
+                    {%include 'weight.html'%}
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -239,7 +328,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="result-popup">Radiology Investigations - Result</h4>
+                <h4 class="modal-title" id="result-popup">Checkup - Results</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -284,7 +373,7 @@
                     </table>
                 </div>
                 <div class="comment">
-                    <p><span class="fw-600">Comment</span> : <span class="comment-here text-mute">Lorem ipsum dolor sit
+                    <p><span class="fw-600">Remarks:</span> : <span class="comment-here text-mute">Lorem ipsum dolor sit
                             amet, consectetur adipisicing elit. </span></p>
                 </div>
                 <div class="table-responsive">
@@ -295,10 +384,10 @@
                                 <th colspan="2" class="b-0">Signed By</th>
                             </tr>
                             <tr class="bg-secondary">
-                                <td>Donald jr</td>
-                                <td>Time : 11-8-2017 04:22</td>
-                                <td>Lous Clark</td>
-                                <td>Time : 11-8-2017 04:22</td>
+                                <td>{{checkup.checkup_user}}</td>
+                                <td>Time : {{checkup.checkup_date}}2</td>
+                                <td>{{checkup.verified_by}}</td>
+                                <td>&nbsp;</td>
                             </tr>
                         </tbody>
                     </table>
@@ -307,7 +396,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger pull-right" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-info pull-right">Print</button>
-                <button type="button" class="btn btn-success pull-right">Save</button>
+                <button type="button" class="btn btn-success pull-right" onclick="location.href='{{checkup.get_checkup_link}}'">Save</button>
             </div>
         </div>
         <!-- /.modal-content -->
