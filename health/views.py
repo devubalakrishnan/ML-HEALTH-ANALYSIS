@@ -24,6 +24,11 @@ from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
 import os
+#from .utilis import email_check
+from django.template.loader import get_template
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
 
 #intialize ecg object
 
@@ -43,7 +48,7 @@ def home(request):
 def dashboard_patient(request,patient_id):
     patient=Profile.objects.get(p_id=patient_id)
     checkup=patient.checkups.all().order_by('-checkup_date')[:3]
-    daily_prescriptions=track_medicine.objects.filter(track_for=patient,took_medicines=False,reminder_sent=True)
+    daily_prescriptions=track_medicine.objects.filter(track_for=patient,took_medicines=False,reminder_sent=True).order_by('-id')
     context={
         'patient_id':patient.p_id,
         'patient':patient,
@@ -80,11 +85,21 @@ def update_meds(request):
         send_time=patient.get_medicine_time(slot)
         medicine=Medicines(medicine_name=medname,medicine_type=medtype,dosage=dose,before_food=bf,after_food=af,time_slot=slot,capsules=caps)
         medicine.save()
-        prescription=medicine_prescription(intake_user=patient,timeslot=slot,before_food=bf,send_on=send_time)
-        prescription.save()
+
+        try:
+            prescription = medicine_prescription.objects.get(
+                intake_user=patient, timeslot=slot, before_food=bf, send_on=send_time)
+        except medicine_prescription.DoesNotExist:
+            prescription=medicine_prescription(intake_user=patient,timeslot=slot,before_food=bf,send_on=send_time)
+            prescription.save()
         prescription.medicines.add(medicine)
         return redirect(patient.dash_url())
-        
+def update_reminder(request,reminder_id):
+    patient = Profile.objects.get(patient=request.user)
+    prescription = track_medicine.objects.get(id=reminder_id)
+    prescription.took_medicines=True
+    prescription.save()
+    return redirect(patient.dash_url())   
 def reports(request,patient_id):
     patient = Profile.objects.get(p_id=patient_id)
     checkup = patient.checkups.all()
@@ -96,6 +111,30 @@ def reports(request,patient_id):
     }
     return render(request, "reports.html", context)
 
+def send_checkup_mail(request,checkup):
+    use_https = False
+    patient = Profile.objects.get(patient=request.user)
+    html_tpl_path = 'email/healthica.html'
+    
+    context_data = {
+        'patient_name': checkup.checkup_user.patient.first_name,
+        'checkup_date': checkup.checkup_date,
+        'checkup_type': checkup.get_checkup_type,
+        'checkup_id': checkup.checkup_id,
+         'patient_id': patient.p_id, 'domain': get_current_site(
+        request).domain, 'protocol': 'https' if use_https else 'http'}
+    email_html_template = get_template(
+        html_tpl_path).render(context_data)
+    receiver_email = patient.patient.email
+    email_msg = EmailMessage('Checkup Report',
+                             email_html_template,
+                             settings.EMAIL_HOST_USER,
+                             [receiver_email],
+                             reply_to=[settings.EMAIL_HOST_USER]
+                             )
+    # this is the crucial part that sends email as html content but not as a plain text
+    email_msg.content_subtype = 'html'
+    email_msg.send(fail_silently=False)
 
 def create_checkup(request,details,type):
     patient=Profile.objects.get(patient=request.user)
@@ -106,9 +145,11 @@ def create_checkup(request,details,type):
         checkup = Checkup(checkup_id=chkup_id, checkup_user=patient, checkup_date=datetime.now(
         ), checkup_details=details, checkup_type=type,scan_path=image)
         checkup.save()
+        send_checkup_mail(request,checkup)
         return checkup
     checkup=Checkup(checkup_id=chkup_id,checkup_user=patient,checkup_date=datetime.now(),checkup_details=details,checkup_type=type)
     checkup.save()
+    send_checkup_mail(request, checkup)
     return checkup
 
 def get_response(request,intent,session):
@@ -253,7 +294,14 @@ def heartdisease(request):
     else:
         return render(request,'heartdisease.html')
 
-
+@csrf_exempt
+def updatePrescription(request):
+    data=json.loads(request.body)
+    pid=data["patient_id"]
+    patient=Profile.objects.get(p_id=pid)
+    pres = track_medicine.objects.filter(
+        track_for=patient, took_medicines=False, reminder_sent=True)
+    return render(request,'med-card.html',{'daily_pres':pres})
 @csrf_exempt
 def pedigree(request):
     data = json.loads(request.body)
@@ -286,7 +334,14 @@ def render_to_pdf(template_src, context_dict={}):
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
 
-
+def show_report(request,patient_id,checkup_id):
+    patient = Profile.objects.get(p_id=patient_id)
+    try:
+        checkup = Checkup.objects.get(
+            checkup_id=checkup_id, checkup_user=patient)
+    except Checkup.DoesNotExist:
+        return HttpResponse('<h1>No Reports Found!</h1>')
+    return render(request,'reportcard.html',{'checkup':checkup})
 @login_required
 def PDF(request,patient_id,checkup_id):
     patient=Profile.objects.get(p_id=patient_id)

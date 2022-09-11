@@ -40,6 +40,10 @@
         color: #0A19FE;
         font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     }
+    .column p{
+        padding: 0;
+        color: rgba(0, 0, 0, 0.7);
+    }
 
 
     input[type=submit]:hover {
@@ -79,6 +83,22 @@
     .row>* {
         width: 50% !important;
     }
+    .column{
+        position: relative;
+    }
+    .unit {
+    position: absolute;
+    display: block;
+    right: 5px;
+    width: 50px;
+
+    top: 20px;
+    z-index: 9;
+    text-align: left;
+}
+.content p{
+    color: black;
+}
     </style>
     </head>
     <body>
@@ -138,17 +158,178 @@
             <div id="form2">
                 <form action="{%url 'predicteddiabetes'%}" method="post" name="diabetic_form">
                     {%csrf_token%}
-                    <!-- <input type="text" name="Pregnancies" placeholder="Pregnancies" required="required" /> -->
-                    <input type="text" name="Glucose Level" placeholder="Glucose Level" required="required" />
-                    <!--  <input type="text" name="Blood Pressure" placeholder="Blood Pressure" required="required" />
-                                <input type="text" name="Skin Thickness" placeholder="Skin Thickness" required="required" />-->
-                    <input type="text" name="Insulin" placeholder="Insulin" required="required" />
-                    <input type="text" name="BMI" placeholder="BMI" required="required" />
-                    <input type="text" name="Diabetes_PF" placeholder="Diabetes PF" required="required" readonly />
-                    <input type="text" name="Age" placeholder="Age" required="required" value="{{age}}" />
+                    <div class="column">
+                        <input type="text" name="Glucose Level" placeholder="Glucose Level" required="required" />
+                        <span class="unit">mg/dL</span>
+                    </div>
+                    
+                    <div class="column">
+                        <input type="text" name="Insulin" placeholder="Insulin" required="required" />
+                        <span class="unit">IU/ml</span>
+                    </div>
+                    <div class="column">
+                        <input type="text" name="BMI" placeholder="BMI" required="required" />
+                        <span class="unit">kg/m <sup>2</sup></span>
+                    </div>
+                    <div class="column">
+                        <input type="text" name="Diabetes_PF" placeholder="Diabetes PF" required="required" readonly />
+                        <span class="unit">PF</span>
+                        <p><b>Pedigree Function</b> is a probabilistic value of the risk of 
+                            having diabetes calculated based on genetic information provided. <a href="#" id="learn">Learn more &#8250;</a></p>
+                    </div>
+                    <div class="column"><input type="text" name="Age" placeholder="Age" required="required" value="{{age}}" readonly />
+                    <span class="unit">Age</span></div>
                     <input type="submit" class="registerbtn" value="PREDICT">
                 </form>
             </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content">
+            <h1>Everything You Need to Know About Diabetes</h1>
+            <div style="text-align: center; margin-top: 20px">
+                <img style="max-width: 600px" src="static/img/diabetes.png" /><br /><br />
+            </div>
+            <p>Diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. Blood
+                glucose is your main source of energy and comes from the food you eat. Insulin, a hormone made by the
+                pancreas, helps glucose from food get into your cells to be used for energy. With diabetes, your body
+                either doesn't make enough insulin or can't effectively use the insulin it does make.
+                Symptoms include increased thirst, frequent urination, hunger, fatigue,Weight loss without trying and blurred vision.</p>
+                <h3>Type 1 Diabetes</h3>
+                <p>A chronic condition in which the pancreas produces little or no insulin.
+                It typically appears in adolescence.Different factors, such as genetics and some viruses, 
+                may cause type 1 diabetes. Although type 1 diabetes usually
+                appears during childhood or adolescence, it can develop in adults.</p>
+                <p>For type 1 diabetes the normal blood glucose sugar levels are 
+                   <b>
+                    <h5>INSULIN LEVEL</h5> <br>
+                    4-7 mmol/L= 72-126 mg/dl <br>
+                    Under 9 mmol/L= 162 mg/dl <br>
+                    <h5>BLOOD SUGAR LEVEL</h5> <br>
+                    <ul>
+                        <li> Fasting blood glucose level -- Diabetes is diagnosed if it is 126 mg/dL (7 mmol/L) or higher two different times.
+
+                            <li>Random (non-fasting) blood glucose level -- You may have diabetes if it is 200 mg/dL (11.1 mmol/L) or higher, and you have symptoms such as increased thirst, urination, and fatigue. (This must be confirmed with a fasting test.) </li>
+                            <li>Oral glucose tolerance test -- Diabetes is diagnosed if the glucose level is 200 mg/dL (11.1 mmol/L) or higher 2 hours after you drink a special sugar drink.</li>
+                            <li> Hemoglobin A1C (A1C) test -- Diabetes is diagnosed if the result of the test is 6.5% or higher.</li>
+
+
+
+                
+                    </ul>
+                
+
+
+
+
+
+                   </b> 
+               
+               
+               
+               
+               
+                </p>
+
+                <h3>Type 2 Diabetes</h3>
+                <p>Type 2 diabetes is a disease that keeps your body from using insulin the way it should.
+                    With type 2 diabetes, the body either doesn't produce enough insulin, or it resists insulin.
+                     It’s the most common type—about 90% to 95% Trusted Source of people living with diabetes have type 2.
+                </p>
+                <p>For type 2 diabetes the normal blood glucose sugar levels are 
+                   <b>
+                    <h5>INSULIN LEVEL</h5> <br>
+                    4-7 mmol/L= 72-126 mg/dl <br>
+                    Under 8.5 mmol/L= 162 mg/dl <br>
+                    <h5>BLOOD SUGAR LEVEL</h5> <br>
+                    <ul>
+                        <li> Fasting blood glucose level -- Diabetes is diagnosed if it is 126 mg/dL (7 mmol/L) or higher two different times.
+
+                            <li>Random (non-fasting) blood glucose level --  a level of 200 mg/dL (11.1 mmol/L) or higher suggests diabetes, especially if you also have signs and symptoms of diabetes, such as frequent urination and extreme thirst. </li>
+                            <li>Fasting blood sugar test -- Diabetes is diagnosed if the glucose level is 200 mg/dL (11.1 mmol/L) or higher 2 hours after you drink a special sugar drink.</li>
+                            <ul>
+                                <li> Less than 100 mg/dL (5.6 mmol/L) is normal</li>
+                                 <li>   100 to 125 mg/dL (5.6 to 6.9 mmol/L) is diagnosed as prediabetes.</li>
+                                  <li>  126 mg/dL (7 mmol/L) or higher on two separate tests is diagnosed as diabetes</li>
+                                
+
+
+
+
+
+                            </ul>
+                            <li> Oral glucose tolerance test --Less than 140 mg/dL (7.8 mmol/L) is normal.</li>
+                             <li>   140 to 199 mg/dL (7.8 mmol/L and 11.0 mmol/L) is diagnosed as prediabetes.</li>
+                             <li>   200 mg/dL (11.1 mmol/L) or higher after two hours suggests diabetes. </li>
+
+
+
+                
+                    </ul>
+                    <p>
+                        Management of type 2 diabetes includes:
+<ul>
+<li>Healthy eating</li>
+<li>Regular exercise</li>
+<li>Weight loss</li>
+<li>Possibly, diabetes medication or insulin therapy</li>
+<li>Blood sugar monitoring</li>
+</ul>
+
+                    </p>
+
+                <p>
+                    <h5> BMI LEVEL  </h5>
+                    
+
+ BMI of 25-29.9
+ BMI of 30-39.9 (obesity)
+ BMI of 40 or greater(severe obesity)
+
+
+
+
+                </p>
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </p>
+            <h2>What health problems can people with diabetes develop? </h2>
+            
+            <p>Over time, high blood glucose leads to problems such as</p>
+            
+            <ul>
+                <li>heart disease</li>
+                <li>stroke</li>
+                <li>kidney disease</li>
+                <li>eye problems</li>
+                <li>dental disease</li>
+                <li>nerve damage</li>
+                <li>foot problems</li>
+                
+                
+            </ul>
+
+            <br>
+            <hr>
+            <br>
         </div>
     </div>
     

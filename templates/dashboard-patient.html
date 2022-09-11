@@ -64,7 +64,40 @@
         -->
         
         <div class="box times">
-            <form action="{%url 'timesave'%}" method="post">
+            <div class="timedisplay">
+                <a class="edit"><img src="{%static 'media/img/edit.png'%}" alt=""></a>
+                <div class="timebox row">
+                    <div class="col-md-3"><img src="{%static 'media/img/morning.png'%}" alt="" srcset=""></div>
+                    <div class="col-md-9"><div class="timediv">
+                        <h3>Breakfast Time</h3>
+                        <h4>{{patient.breakfast}}</h4>
+                    </div></div>
+                </div>
+                <div class="timebox row">
+                    <div class="col-md-3">
+                        
+                            <img src="{%static 'media/img/lunch.png'%}" alt="" srcset="">
+                        
+                    </div>
+                    <div class="col-md-9"><div class="timediv">
+                        <h3>Lunch Time</h3>
+                        <h4>{{patient.lunch}}</h4>
+                    </div></div>
+                </div>
+                <div class="timebox row">
+                    <div class="col-md-3">
+                        <img src="{%static 'media/img/night-mode.png'%}" alt="" srcset="">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="timediv">
+                            <h3>Dinner Time</h3>
+                            <h4>{{patient.dinner}}</h4>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <form action="{%url 'timesave'%}" method="post" class="timeform">
                 {%csrf_token%}
                 <div class="timeslot">
                     <label>Breakfast Time:<input type="time" class="form-control" name="breakfast" id="bf"></label>
@@ -126,7 +159,7 @@
                 </div>
             </div>
             <div class="box-body pt-0">
-                <p><small>Recorded on 25/05/2020</small></p>
+                <p><small>Recorded on 25/05/2022</small></p>
             </div>
             <div class="box-body bg-primary">
                 <img src="{%static 'media/images/smoking.png'%}" alt="" class="float-start me-10">
@@ -166,7 +199,7 @@
                         </label>
                         <input type="radio" id="tablet" name="medicon" value="tablet">
                         <label for="tablet">
-                            <img src="{%static 'media/img/tablets.png'%}">
+                            <img src="{%static 'media/img/tablet.png'%}">
                         </label>
                 
                         <input type="radio" id="syringe" name="medicon" value="syringe">
@@ -255,27 +288,41 @@
         </div>
         <!---->
         <div class="box">
-            <div class="medshow">
+            <div class="box-header">
+                <h4 class="box-title">Medicine Reminders</h4>
+            </div>
+            <div class="medshow flex-row flex-nowrap">
                 {%for prescription  in daily_pres%}
+                
                 <div class="prescription box">
                     <div class="box-body">
-                        <h2 class="badge-secondary">{{prescription.medicine_date}}</h2>
+                        <h5 class="">{{prescription.medicine_date}}</h5>
                         <span class="badge badge-secondary"><ion-icon name="time" style="margin-bottom: -1px; margin-right: 2px;"></ion-icon>{{prescription.prescription.send_on}}</span>
-                        <span class="badge badge-warning-light">{{prescription.prescription.med_time}}</span>
+                        <span class="badge {{prescription.prescription.med_class}}">{{prescription.prescription.med_time}}</span>
+                        {%for medicine in prescription.prescription.medicines.all%}
                         <div class="">
                             <div class="row">
                                 <div class="col1">
-                                    <img src="{%static 'media/img/tablets.png'%}" alt="">
+                                    {%if medicine.medicine_type == "TABLET"%}
+                                    <img src="{%static 'media/img/tablet.png'%}" alt="">
+                                    {%elif medicine.medicine_type == "PILLS"%}
+                                    <img src="{%static 'media/img/pills.png'%}" alt="">
+                                    {%elif medicine.medicine_type == "SYRUP"%}
+                                    <img src="{%static 'media/img/syrup.png'%}" alt="">
+                                    {%elif medicine.medicine_type == "SYRINGE"%}
+                                    <img src="{%static 'media/img/syringe.png'%}" alt="">
+                                    {%endif%}
                                 </div>
                                 <div class="col dets">
-                                    <h3>Lisinopril</h3>
-                                    <p class="meds">150mg, 1 capsule</p>
-                                    <p>After Breakfast</p>
+                                    <h3>{{medicine.medicine_name}}</h3>
+                                    <p class="meds">{{medicine.med_unit}}</p>
+                                    <p>{{prescription.prescription.med_time}}</p>
                                 </div>
                             </div>
                             <hr>
                         </div>
-                        <div class="">
+                        {%endfor%}
+                        <!--<div class="">
                             <div class="row">
                                 <div class="col1">
                                     <img src="{%static 'media/img/pills.png'%}" alt="">
@@ -287,13 +334,23 @@
                                 </div>
                             </div>
                             <hr>
-                        </div>
+                        </div>-->
                         <div class="medbtn">
-                            <button><ion-icon name="close"></ion-icon> Skip</button>
-                            <button><ion-icon name="checkmark"></ion-icon> Done </button>
+                            <button onclick="myreminder()"><ion-icon name="close" ></ion-icon> Skip</button>
+                            <button onclick="location.href='{{prescription.get_url}}';"><ion-icon name="checkmark"></ion-icon> Done </button>
                         </div>
                     </div>
+                    <!--Pattern-->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                    <path fill="#f3f4f5" fill-opacity="0.2"
+                        d="M0,0L21.8,10.7C43.6,21,87,43,131,53.3C174.5,64,218,64,262,58.7C305.5,53,349,43,393,69.3C436.4,96,480,160,524,192C567.3,224,611,224,655,197.3C698.2,171,742,117,785,122.7C829.1,128,873,192,916,224C960,256,1004,256,1047,250.7C1090.9,245,1135,235,1178,213.3C1221.8,192,1265,160,1309,170.7C1352.7,181,1396,235,1418,261.3L1440,288L1440,320L1418.2,320C1396.4,320,1353,320,1309,320C1265.5,320,1222,320,1178,320C1134.5,320,1091,320,1047,320C1003.6,320,960,320,916,320C872.7,320,829,320,785,320C741.8,320,698,320,655,320C610.9,320,567,320,524,320C480,320,436,320,393,320C349.1,320,305,320,262,320C218.2,320,175,320,131,320C87.3,320,44,320,22,320L0,320Z">
+                    </path>
+                    <path fill="#f3f4f5" fill-opacity="0.1"
+                        d="M0,192L34.3,197.3C68.6,203,137,213,206,224C274.3,235,343,245,411,234.7C480,224,549,192,617,170.7C685.7,149,754,139,823,117.3C891.4,96,960,64,1029,53.3C1097.1,43,1166,53,1234,48C1302.9,43,1371,21,1406,10.7L1440,0L1440,320L1405.7,320C1371.4,320,1303,320,1234,320C1165.7,320,1097,320,1029,320C960,320,891,320,823,320C754.3,320,686,320,617,320C548.6,320,480,320,411,320C342.9,320,274,320,206,320C137.1,320,69,320,34,320L0,320Z">
+                    </path>
                     
+                </svg>
+                
                 </div>
                 {%endfor%}
             </div>
@@ -308,6 +365,12 @@
                         <h3>{{patient.blood_grp}}</h3>
                         <span class="btext">Blood Group</span>
                     </div>
+                </div>
+                <div class="box foodt">
+                    
+                    <p>Breakfast Time:</p>
+                    <p>Lunch Time:</p>
+                    <p>Dinner Time:</p>
                 </div>
             </div>
             <div class="col-md-6">
@@ -405,8 +468,43 @@
 </div>
 {%endfor%}
 <!-- /.modal -->
+<!-- Modal -->
+<div class="modalrem">
+    
+</div>
+<!-- /.modal -->
+<script>
+    function fixed() {
+        console.log("have");
+        Push.create("hello world", {
+            body: "How's it hangin'?\nhiii",
+            icon: "{%static 'media/images/HEALTHICA.png'%}",
+            onClick: function () {
+                window.focus();
+                this.close();
+            }
+        });
+    }
+        function myreminder(){
+            $("#modal-fill").modal('toggle'); //see here usage
+};
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.min.js"> </script>
 <script src="{%static 'js/chart.js'%}"></script>
+<script>
+    if("{{patient.breakfast}}"!="none"){
+        document.querySelector('.timeform').style.display="none";
+        //console.log("{{patient.breakfast}}");
+    }
+    else{
+        document.querySelector('.timedisplay').style.display = "none";
+    }
+    const edit=document.querySelector(".edit");
+    edit.addEventListener('click',(e)=>{
+         document.querySelector('.timedisplay').style.display = "none";
+         document.querySelector('.timeform').style.display = "block";
+    })
+</script>
 <script>get_data([67, 72, 68, 67, 67.8, 71])</script>
 
 {%endblock%}

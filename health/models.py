@@ -1,3 +1,4 @@
+from ctypes.wintypes import MSG
 from datetime import datetime, timedelta
 from distutils.command import upload
 from email import message
@@ -89,6 +90,12 @@ class Medicines(models.Model):
     after_food=models.BooleanField(default= False)
     capsules = models.IntegerField(null=True)
     time_slot = models.CharField(choices=timeslots, max_length=20)
+    
+    def med_unit(self):
+        if self.medicine_type in ["TABLET","PILLS"]:
+            return str(self.dosage)+"mg, "+str(self.capsules)+" capsules"
+        else:
+            return str(self.dosage)+"ml"
 
 class medicine_prescription(models.Model):
     timeslots = (('BREAK FAST', 1),
@@ -108,10 +115,19 @@ class medicine_prescription(models.Model):
             string="After "
         return string+self.timeslot.lower().capitalize()
     def med_class(self):
-        if self.slot=="BREAK FAST":
+        cls=""
+        if self.timeslot=="BREAK FAST":
             cls="badge-warning"
-            if self.before_food:
-                pass
+        elif self.timeslot=="LUNCH":
+            cls="badge-success"
+        elif self.timeslot=="DINNER":
+            cls="badge-dark"
+        if self.before_food and self.timeslot == "DINNER":
+            cls="badge-grey"
+        elif self.before_food:
+            cls+="-light"
+        return cls
+
 
 @receiver(post_save, sender=medicine_prescription)
 def notification_handler(sender, instance, created, **kwargs):
@@ -122,7 +138,7 @@ def notification_handler(sender, instance, created, **kwargs):
             name=f"medicine-notification-{instance.intake_user.p_id}-{instance.timeslot}-BF"
         else:
             send_time = datetime.combine(datetime.today(),instance.send_on) + timedelta(minutes=30)
-            name = f"medicine-notification-{instance.intake_user.p_id}-{instance.timeslot}-BF"
+            name = f"medicine-notification-{instance.intake_user.p_id}-{instance.timeslot}-AF"
 
         schedule, created = CrontabSchedule.objects.get_or_create(hour=send_time.hour, minute=send_time.minute)
         task = PeriodicTask.objects.create(crontab=schedule, name=name, task="notifications.tasks.medicine_notification", args=json.dumps((instance.id,)))
@@ -135,8 +151,9 @@ class track_medicine(models.Model):
     took_medicines = models.BooleanField(default=False)
     reminder_sent = models.BooleanField(default=False)
     class meta:
-        ordering=['-medicine_date']
-
+        ordering=('-medicine_date')
+    def get_url(self):
+        return reverse('reminder-update', kwargs={'reminder_id': self.id})
 class Trackweight(models.Model):
     current_weight=models.FloatField()
     user=models.ForeignKey(Profile,on_delete=models.CASCADE)
@@ -175,7 +192,8 @@ class Checkup(models.Model):
         if self.checkup_details is not None:
             #print(json.loads(self.checkup_details))
             return json.loads(self.checkup_details)
-        
+    def get_report_link(self):
+        return reverse('patient-report', kwargs={'patient_id': self.checkup_user.p_id, 'checkup_id': self.checkup_id})
     def get_checkup_link(self):
         return reverse('pdfcheckup', kwargs={'patient_id':self.checkup_user.p_id,'checkup_id': self.checkup_id})
     

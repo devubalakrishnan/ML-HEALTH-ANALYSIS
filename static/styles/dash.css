@@ -4,18 +4,62 @@
 .medshow{
     padding: 10px;
     overflow-x: scroll;
+    display: flex;
+}
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+    height: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    
+    background-color: rgba(0, 0, 0, .2);
+    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 }
 .medshow::-webkit-scrollbar {
-    display: none;
+    
 }
 .prescription{
-        background: #c8c9ee !important;
-            color: #172b4c !important;
+        background: #4187f6 !important;
+            color: black !important;
+        margin-right: 20px;
 }
 .prescription h2{
     font-family: 'Arimo', sans-serif !important;
     padding: 4px;
     border-radius: 5px;
+}
+.meds{
+    color: white;
+}
+.foodt>p{
+    margin:5px 5px;
+}
+.edit{
+    width: 25px;
+        position: absolute;
+        right: 1.5%;
+        top: 9%;
+}
+.timedisplay{
+    display: flex;
+        justify-content: space-around;
+}
+.timebox {
+    width: 30%;
+    height: 120px;
+    margin: 10px 0px;
+    color: white;
+    background: linear-gradient(90deg, rgba(52, 52, 52, 1) 0%, rgba(33, 33, 33, 1) 100%);
+    border-radius: 15px;
+}
+.timediv{
+    padding: 20px 0px;
+}
+.timebox img{
+    padding: 30px 0px;
 }
 .col1{
     width:20%;
@@ -41,7 +85,7 @@
     background: none;
 }
 .medshow .box{
-    width: 300px;
+    min-width: 300px;
 }
 .timeslot{
     display: flex;

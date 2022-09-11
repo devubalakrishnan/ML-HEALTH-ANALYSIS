@@ -41,12 +41,15 @@ input[type=text], select {
 input[type=submit]:hover {
   background-color: #e48912;
 }
-
+.spacer{
+        margin-top: 150px;
+    }
 
 </style>
 </head>
 <body>
-
+{%include 'navbar.html'%}
+<div class="spacer"></div>
   
   <h2>Results: </h2>
 {% if prediction == 1 %}

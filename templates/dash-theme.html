@@ -254,7 +254,7 @@
         // add active class in selected tab
         const list = document.querySelectorAll('.list');
         var cpage=document.getElementById('{{current_page}}');
-        console.log('{{current_page}}');
+        //console.log('{{current_page}}');
         NodeList.prototype.indexOf = Array.prototype.indexOf;
         ind=list.indexOf(cpage);
         console.log(ind);
@@ -275,6 +275,8 @@
     <!-- Doclinic App -->
     <script src=""></script>
     <script src="{%static 'djs/template.js'%}"></script>
+    <script src="{%static 'js/push.min.js'%}"></script>
+    <script src="{%static 'js/serviceWorker.min.js'%}"></script>
     
     <script src="{%static 'assets/icons/feather-icons/feather.min.js'%}"></script>
     <script src="{%static 'assets/vendor_components/OwlCarousel2/dist/owl.carousel.js'%}"></script>
@@ -282,7 +284,63 @@
     <script src="https://unpkg.com/boxicons@2.1.2/dist/boxicons.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script src="{%static 'assets/vendor_components/apexcharts-bundle/dist/apexcharts.js'%}"></script>
-    
+    <script>
+        const patient_id = JSON.parse(document.getElementById('room-name').textContent);
+        const notificationSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/patient-dashboard/'
+            + patient_id
+            + '/'
+        );
+
+        notificationSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            console.log(data);
+            Push.create(data.message, {
+                body: data.medicine,
+                icon: "{%static 'media/images/HEALTHICA.png'%}",
+                link:"{{patient.dash_url}}",
+                onClick: function () {
+                    window.focus();
+                    this.close();
+                }
+            });
+            fetch('http://127.0.0.1:8000/health/updatePrescription', {
+                method: 'POST',
+                body: JSON.stringify({ patient_id: "{{patient.p_id}}" }),
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/html'
+                },
+            })
+                .then(res => res.text())
+                .then(r=>{
+                    document.querySelector('.modalrem').innerHTML = r;
+                    const med=document.querySelector('.medshow');
+                    med.innerHTML=r+med.innerHTML;
+                    //console.log(r);
+                    myreminder();
+                }).catch((error) => {
+                    console.log('Error', error);
+                    //textField.value = ''
+                });
+
+            
+            
+            //document.getElementById('noti-container').innerHTML += '<input class="checkbox" type="checkbox" id="size_1" value="small" checked />' + '<label class="notification new" for= "size_1"> <em>1</em>' + data["message"] + '<i class="material-icons dp48 right" >clear</i></label>';
+            //document.getElementById('noti-count').innerHTML = parseInt(document.getElementById('noti-count').innerHTML) + 1
+            //document.querySelector('#notification-log').value += (data.message + '\n');
+        };
+
+        notificationSocket.onclose = function (e) {
+            console.error('notification socket closed unexpectedly');
+        };
+
+        
+
+
+    </script>
 </body>
 
 </html>
