@@ -14,7 +14,7 @@ class usersymp_ad(admin.ModelAdmin):
 
 
 class doctor_ad(admin.ModelAdmin):
-    list_display = ('pk', 'doctor_id', 'user')
+    list_display = ('pk', 'd_id', 'doctor')
 
 
 class patient_ad(admin.ModelAdmin):

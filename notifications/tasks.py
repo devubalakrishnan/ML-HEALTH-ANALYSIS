@@ -1,5 +1,6 @@
 from ast import Try
 import asyncio
+from datetime import datetime
 import json
 from math import remainder
 from celery import shared_task,Celery,states
@@ -18,18 +19,25 @@ def medicine_notification(self,data):
         prescription=medicine_prescription.objects.filter(id=int(data))
         if len(prescription)>0:
             prescription=prescription.first()
-            userid = prescription.intake_user.p_id
+            patient = prescription.intake_user
+            userid = patient.p_id
             channel_layer=get_channel_layer()
             channel_name="medicine-notificaton-%s"%userid
+            msg=prescription.med_time()+'\n'
+            for medicine in prescription.medicines.all():
+                msg+=medicine.medicine_name.capitalize()
+                msg+=','+medicine.med_unit()
+                msg+='\n'
+                track_medicine(prescription=prescription,medicine_date=datetime.today(),reminder_sent=True,track_for=patient).save()
             loop=asyncio.new_event_loop()
             loop.run_until_complete(channel_layer.group_send(
                 channel_name,
                 {
                     'type': 'send_medicine_notification',
-                    'message': json.dumps(prescription.message)
+                    'message': prescription.message,
+                    'medicine':msg
                 }
             ))
-            track_medicine(prescription=prescription,medicine_date=prescription.send_on.date(),reminder_sent=True).save()
             #prescription.save()
             return "Done"
         else:
