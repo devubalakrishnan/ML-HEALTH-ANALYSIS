@@ -15,7 +15,7 @@ function get_data(raw){
 const myChart = new Chart(ctx, {
     type: 'bar',
     data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: ['18/1/22', '19/2/22', '20/3/22', '18/4/22', '5/7/22', '16/7/22'],
         datasets: [{
             label: 'your weight',
             minBarLength: 8,

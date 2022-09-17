@@ -12,9 +12,11 @@ import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+
+from health.decorators import is_patient
 from .utilis import get_intent,symptoms,predict_disease,precautionDictionary,description, predict_diabetes
 from healthApp.randgenerator import rand
-from .models import Checkup, Profile, Usersymptoms,symptoms as Symptoms
+from .models import Checkup, Doctor, Medicines, Profile, Usersymptoms, medicine_prescription,symptoms as Symptoms, track_medicine
 import pickle
 from .pedigree import Pedigree
 from .Ecg import  ECG
@@ -22,6 +24,11 @@ from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
 import os
+#from .utilis import email_check
+from django.template.loader import get_template
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
 
 #intialize ecg object
 
@@ -31,34 +38,131 @@ import os
 
 @login_required
 def chat_bot(request):
-    return render(request,'chat-bot.html')
+    patient = Profile.objects.get(patient=request.user)
+    return render(request,'chat-bot.html',{'patient':patient})
 
 def home(request):
-    content={"name":"devu","symptoms":symptoms}
+    content={}
     return render(request, 'healthica/homepage.html',content)
     #return HttpResponse('<h1>hello</h1>')
-
+@is_patient
 def dashboard_patient(request,patient_id):
     patient=Profile.objects.get(p_id=patient_id)
-    checkup=patient.checkups.all()[:3]
+    checkup=patient.checkups.all().order_by('-checkup_date')[:3]
+    daily_prescriptions=track_medicine.objects.filter(track_for=patient,took_medicines=False,reminder_sent=True).order_by('-id')
     context={
         'patient_id':patient.p_id,
         'patient':patient,
-        'checkups':checkup
+        'checkups':checkup,
+        'current_page':'home',
+        'daily_pres':daily_prescriptions
     }
-    
     return render(request,"dashboard-patient.html",context)
+
+@login_required
+def dashboard_doctor(request,doctor_id):
+    doctor=Doctor.objects.get(d_id=doctor_id)
+    checkups=Checkup.objects.filter(is_verified=False)
+    context={
+        'doctor_id':doctor_id,
+        'checkups':checkups,
+        'doctor':doctor,
+        'current_page': 'home',
+    }
+    return render(request,'doctor.html',context)
+
+
+def verify_checkup(request,checkup_id,patient_id):
+    if request.POST:
+        comments=request.POST.get('comments','None')
+        vdoctor = Doctor.objects.get(doctor=request.user)
+        patient = Profile.objects.get(p_id=patient_id)
+        checkup = Checkup.objects.get(checkup_user=patient,checkup_id=checkup_id)
+        checkup.is_verified=True
+        checkup.verified_by=vdoctor
+        checkup.comments=comments
+        checkup.save()
+    return redirect(vdoctor.dash_url())
+
+
+def update_timeslots(request):
+    patient=Profile.objects.get(patient=request.user)
+    if request.POST:
+        patient.breakfast=request.POST["breakfast"]
+        patient.lunch=request.POST["lunch"]
+        patient.dinner=request.POST["dinner"]
+        patient.save()
+        return redirect(patient.dash_url())
+
+def update_meds(request):
+     if request.POST:
+        patient=Profile.objects.get(patient=request.user)
+        medname=request.POST["med-name"]
+        medtype=request.POST["med_type"].upper()
+        dose=request.POST["dose"]
+        intake=request.POST["intake"]
+        slot=request.POST["slot"]
+        caps=request.POST["caps_no"]
+        if intake=="BEFORE FOOD":
+            bf=True
+            af=False
+        elif intake=="AFTER FOOD":
+            af = True
+            bf = False
+        send_time=patient.get_medicine_time(slot)
+        medicine=Medicines(medicine_name=medname,medicine_type=medtype,dosage=dose,before_food=bf,after_food=af,time_slot=slot,capsules=caps)
+        medicine.save()
+
+        try:
+            prescription = medicine_prescription.objects.get(
+                intake_user=patient, timeslot=slot, before_food=bf, send_on=send_time)
+        except medicine_prescription.DoesNotExist:
+            prescription=medicine_prescription(intake_user=patient,timeslot=slot,before_food=bf,send_on=send_time)
+            prescription.save()
+        prescription.medicines.add(medicine)
+        return redirect(patient.dash_url())
+def update_reminder(request,reminder_id):
+    patient = Profile.objects.get(patient=request.user)
+    prescription = track_medicine.objects.get(id=reminder_id)
+    prescription.took_medicines=True
+    prescription.save()
+    return redirect(patient.dash_url())   
 def reports(request,patient_id):
     patient = Profile.objects.get(p_id=patient_id)
     checkup = patient.checkups.all()
     context = {
         'patient_id': patient.p_id,
         'patient': patient,
-        'checkups': checkup
+        'checkups': checkup,
+        'current_page': 'reports'
     }
     return render(request, "reports.html", context)
 
+def send_checkup_mail(request,checkup):
+    use_https = False
+    patient = Profile.objects.get(patient=request.user)
+    html_tpl_path = 'email/healthica.html'
     
+    context_data = {
+        'patient_name': checkup.checkup_user.patient.first_name,
+        'checkup_date': checkup.checkup_date,
+        'checkup_type': checkup.get_checkup_type,
+        'checkup_id': checkup.checkup_id,
+         'patient_id': patient.p_id, 'domain': get_current_site(
+        request).domain, 'protocol': 'https' if use_https else 'http'}
+    email_html_template = get_template(
+        html_tpl_path).render(context_data)
+    receiver_email = patient.patient.email
+    email_msg = EmailMessage('Checkup Report',
+                             email_html_template,
+                             settings.EMAIL_HOST_USER,
+                             [receiver_email],
+                             reply_to=[settings.EMAIL_HOST_USER]
+                             )
+    # this is the crucial part that sends email as html content but not as a plain text
+    email_msg.content_subtype = 'html'
+    email_msg.send(fail_silently=False)
+
 def create_checkup(request,details,type):
     patient=Profile.objects.get(patient=request.user)
     details=json.dumps(details)
@@ -68,9 +172,11 @@ def create_checkup(request,details,type):
         checkup = Checkup(checkup_id=chkup_id, checkup_user=patient, checkup_date=datetime.now(
         ), checkup_details=details, checkup_type=type,scan_path=image)
         checkup.save()
+        send_checkup_mail(request,checkup)
         return checkup
     checkup=Checkup(checkup_id=chkup_id,checkup_user=patient,checkup_date=datetime.now(),checkup_details=details,checkup_type=type)
     checkup.save()
+    send_checkup_mail(request, checkup)
     return checkup
 
 def get_response(request,intent,session):
@@ -106,7 +212,7 @@ def get_response(request,intent,session):
         response=["disease","You may have {} disease".format(disease),disease]
 
     elif intent == "end-chat":
-        response = ''
+        response = 'Thankyou! Take care!'
     else:
         response='Invalid Message!'
     return response,user_symptoms.check_up_id
@@ -129,7 +235,7 @@ def predict(request):
 
 
 
-
+@login_required
 def diabetes_view(request):
     return render(request, 'diabeticform.html',{'age':request.user.profile.age})
 
@@ -143,8 +249,11 @@ def diabetes(request):
         Age=request.POST.get('Age')
         r,pred=predict_diabetes(request)#)
         details = {key:x for key, x in request.POST.items() if key != "csrfmiddlewaretoken"}
+        
         if pred==1:
             result = "Chances of having Diabetes is more."
+        elif int(Glucoselevel) > 200:
+            result = "You maybe affected with Diabetes"
         else:
             result = "No Worries!!! You don't have Diabetes."
         details["results"]=result
@@ -154,7 +263,7 @@ def diabetes(request):
         #return render(request,'result.html'
 
 
-
+@login_required
 def heartdisease(request):
 
     #get the uploaded image
@@ -215,7 +324,14 @@ def heartdisease(request):
     else:
         return render(request,'heartdisease.html')
 
-
+@csrf_exempt
+def updatePrescription(request):
+    data=json.loads(request.body)
+    pid=data["patient_id"]
+    patient=Profile.objects.get(p_id=pid)
+    pres = track_medicine.objects.filter(
+        track_for=patient, took_medicines=False, reminder_sent=True)
+    return render(request,'med-card.html',{'daily_pres':pres})
 @csrf_exempt
 def pedigree(request):
     data = json.loads(request.body)
@@ -248,18 +364,29 @@ def render_to_pdf(template_src, context_dict={}):
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
 
-
-
-def PDF(request,checkup_id):
-    checkup= Checkup.objects.get(checkup_id=checkup_id)
+def show_report(request,patient_id,checkup_id):
+    patient = Profile.objects.get(p_id=patient_id)
+    try:
+        checkup = Checkup.objects.get(
+            checkup_id=checkup_id, checkup_user=patient)
+    except Checkup.DoesNotExist:
+        return HttpResponse('<h1>No Reports Found!</h1>')
+    return render(request,'reportcard.html',{'checkup':checkup})
+@login_required
+def PDF(request,patient_id,checkup_id):
+    patient=Profile.objects.get(p_id=patient_id)
+    try:
+        checkup= Checkup.objects.get(checkup_id=checkup_id,checkup_user=patient)
+    except Checkup.DoesNotExist:
+        return HttpResponse('<h1>No Reports Found!</h1>')
     data = {
         'patient_name':checkup.checkup_user,
         'checkup_date':checkup.checkup_date,
         'checkup_type' :checkup.checkup_type,
         'checkup_details' :json.loads(checkup.checkup_details),
         'is_verified':checkup.is_verified,
-        'verified_by':checkup.verified_by
-
+        'verified_by':checkup.verified_by,
+        'checkup_id':checkup.checkup_id
     }
     
 

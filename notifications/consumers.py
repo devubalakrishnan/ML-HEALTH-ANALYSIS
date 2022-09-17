@@ -39,8 +39,9 @@ class dashboardConsumer(AsyncWebsocketConsumer):
     # Receive message from room group
     async def send_medicine_notification(self, event):
         message = event['message']
-
+        medicine=event['medicine']
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
-            'message': message
+            'message': message,
+            'medicine':medicine
         }))

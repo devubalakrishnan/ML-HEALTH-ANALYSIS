@@ -11,7 +11,7 @@ ped_form.addEventListener('submit',(e)=>{
     let mother_diabetic=form_obj.mother_diabetic.value;
     let siblings_diabetic=form_obj.siblings.value;
     console.log("grand parent father ",gp_f)
-    fetch('http://127.0.0.1:8000/health/pedigree', {
+    fetch(window.location.origin.toString()+'/health/pedigree', {
         method: 'POST',
         body: JSON.stringify({ grandp_f:gp_f,grandp_m:gp_m,diabetic_father:father_diabetic,diabetic_mother:mother_diabetic,siblings:siblings_diabetic}),
         mode: 'cors',
@@ -34,3 +34,8 @@ ped_form.addEventListener('submit',(e)=>{
     form2.style.opacity="1";
     
 })
+
+window.onload=()=>{
+    if (window.location.href.includes('result'))
+        window.location.href += '#result'
+}
