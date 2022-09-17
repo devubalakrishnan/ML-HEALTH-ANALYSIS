@@ -96,11 +96,12 @@
 
         <div class="row">
           <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0">
-            <a href="{{request.user.profile.dash_url}}">
+            
+            <a href="{%if request.user.profile %}{{request.user.profile.dash_url}}{%else%}{{request.user.doctor.dash_url}}{%endif%}">
               <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
                 <div class="icon"><i class="fas fa-heartbeat"></i></div>
-                <h4 class="title">Dashboard</h4>
-                <p class="description">We provide a detailed summary of all your online medical documents</p>
+                <h4 class="title">Dashboard </h4>
+                <p class="description">We provide a detailed summary of all your online medical documents , Disease predictor reports here!!</p>
               </div>
             </a>
           </div>
@@ -130,8 +131,7 @@
               <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
                 <div class="icon"><i class="fas fa-hand-holding-medical"></i></div>
                 <h4 class="title">Heart Disease</h4>
-                <p class="description">Our prescription tracker takes note of all the prescriptions in your medicine cabinet and
-                  reminds you when it is time to stock up.</p>
+                <p class="description"> Upload your ECG reports and check your chances of having any minor to major heart disease.</p>
               </div>
             </a>
           </div>
@@ -166,19 +166,21 @@
             <div class="icon-box">
               <div class="icon"><i class="bx bx-heart"></i></div>
               <h4 class="title"><a href="">HEALTH IS WEALTH</a></h4>
-              <p class="description">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+              <p class="description"> The common saying Health is Wealth fits everyone’s life. Good health is real wealth means money which can help us always.
+
+              </p>
             </div>
 
             <div class="icon-box">
               <div class="icon"><i class="bx bx-health"></i></div>
               <h4 class="title"><a href="">EMERGENCY</a></h4>
-              <p class="description">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque</p>
+              <p class="description"> We provide help when people need it the most and help people detect the disease as well as direct them for furthur treatment</p>
             </div>
 
             <div class="icon-box">
               <div class="icon"><i class="bx bx-help-circle"></i></div>
               <h4 class="title"><a href="">SERVICES </a></h4>
-              <p class="description"> </p>
+              <p class="description"> By providing a wide range of disease predictors, the servces offered by this app is splendid. </p>
             </div>
             
           </div>

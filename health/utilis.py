@@ -111,7 +111,7 @@ def predict_diabetes(request):
     final_features = [np.array(float_features)]
     print(sc.transform(final_features))
     pred = diabetes_mod.predict( sc.transform(final_features) )
-    return render(request,"result.html",{'prediction':pred}),pred
+    return render(request, "diabeticform.html", {'prediction': pred, 'age': request.user.profile.age}), pred
 
 
     

@@ -63,16 +63,20 @@ class Profile(models.Model):
 
 
 class Doctor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    doctor = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     phone = models.PositiveBigIntegerField(null=True)
-    specialization = models.CharField(max_length=20, null=True)
-    doctor_id = models.CharField(max_length=12, null=True)
-    works_in = models.CharField(max_length=12, null=True)
+    specialization = models.CharField(max_length=30, null=True)
+    d_id = models.CharField(max_length=12, null=True)
+    works_in = models.CharField(max_length=50, null=True)
     sex = models.CharField(max_length=12, null=True)
 
     def __str__(self):
-        return self.user.username
+        if self.doctor is not None:
+            return self.doctor.username
+        return 'None'
 
+    def dash_url(self):
+        return reverse('doctor-dash', kwargs={'doctor_id': self.d_id})
 
 class Medicines(models.Model):
     timeslots=(('BREAK FAST',1),
@@ -185,6 +189,7 @@ class Checkup(models.Model):
     is_verified = models.BooleanField(default=False)
     scan_path = models.ImageField(upload_to='ecg scan',null=True)
     verified_by = models.ForeignKey(Doctor, on_delete=models.CASCADE,null=True)
+    comments=models.TextField(max_length=250,null=True)
     def get_checkup_type(self):
         return self.checkup_type.lower().capitalize()+' Prediction Test'
 
@@ -199,6 +204,8 @@ class Checkup(models.Model):
     
     def current(self):
         return datetime.now()
+    def verify_checkup(self):
+        return reverse('verify-checkup', kwargs={'patient_id': self.checkup_user.p_id, 'checkup_id': self.checkup_id})
 
 
 class Report(models.Model):

@@ -20,25 +20,29 @@
         @import url('https://fonts.googleapis.com/css2?family=Arimo:wght@500&family=Nunito+Sans:wght@600&family=Roboto+Condensed&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
-    
+
         @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@600&family=Roboto+Condensed&display=swap');
-         @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
-            *{
-                  font-family: 'Poppins', sans-serif;
-            }
-            .name h1{
-                font-family: 'Nunito Sans', sans-serif;
-                font-family: 'Roboto Condensed', sans-serif;
-                margin-bottom: 0;
-            }
-            .navbar{
-                justify-content: normal;
-            }
-            .name{
-                margin-right: 50%;
-            }
+        @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .name h1 {
+            font-family: 'Nunito Sans', sans-serif;
+            font-family: 'Roboto Condensed', sans-serif;
+            margin-bottom: 0;
+        }
+
+        .navbar {
+            justify-content: normal;
+        }
+
+        .name {
+            margin-right: 40%;
+        }
     </style>
-    
+
 </head>
 
 <body class="sidebar-mini theme-primary fixed">
@@ -64,15 +68,15 @@
                 </ul>
             </div>
             <div class="name">
-                <h1>Good Morning, {{patient.fname}}!</h1>
+                <h1>Good Morning, Dr.{{doctor.doctor.first_name}}!</h1>
                 <span class="btext">
-                    Happiness is nothing more than good health!
+                    The presence of the doctor is the beginning of the cure!
                 </span>
             </div>
 
             <div class="navbar-custom-menu r-side">
                 <ul class="nav navbar-nav">
-                    
+
                     <li class="btn-group nav-item d-lg-inline-flex d-none">
                         <a href="#" data-provide="fullscreen"
                             class="waves-effect waves-light nav-link full-screen btn-warning-light" title="Full Screen">
@@ -193,9 +197,9 @@
                                     <span class="icon">
                                         <ion-icon name="home-outline"></ion-icon>
                                     </span>
-                                    <span class="title" >Home</span>
+                                    <span class="title">Home</span>
                                 </a>
-                            <li class="list active"  id="reports">
+                            <li class="list active" id="reports">
                                 <a href="{{patient.dash_url}}/reports">
                                     <span class="icon">
                                         <ion-icon name="document-outline"></ion-icon>
@@ -246,10 +250,10 @@
             {%block details%}
             {%endblock%}
         </div>
-       
+
     </div>
     {{ patient_id|json_script:"room-name" }}
-    
+
     <script>
         // add active class in selected tab
         const list = document.querySelectorAll('.list');
@@ -267,9 +271,9 @@
         list.forEach((item) => item.addEventListener('click', activeLink));
     </script>
 
-    
+
     <!-- Vendor JS -->
-    
+
     <script src="{%static 'djs/vendors.min.js'%}"></script>
 
     <!-- Doclinic App -->
@@ -277,70 +281,14 @@
     <script src="{%static 'djs/template.js'%}"></script>
     <script src="{%static 'js/push.min.js'%}"></script>
     <script src="{%static 'js/serviceWorker.min.js'%}"></script>
-    
+
     <script src="{%static 'assets/icons/feather-icons/feather.min.js'%}"></script>
     <script src="{%static 'assets/vendor_components/OwlCarousel2/dist/owl.carousel.js'%}"></script>
     <script src="{%static 'djs/pages/dashboard2.js'%}"></script>
     <script src="https://unpkg.com/boxicons@2.1.2/dist/boxicons.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script src="{%static 'assets/vendor_components/apexcharts-bundle/dist/apexcharts.js'%}"></script>
-    <script>
-        const patient_id = JSON.parse(document.getElementById('room-name').textContent);
-        const notificationSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/patient-dashboard/'
-            + patient_id
-            + '/'
-        );
-
-        notificationSocket.onmessage = function (e) {
-            const data = JSON.parse(e.data);
-            console.log(data);
-            Push.create(data.message, {
-                body: data.medicine,
-                icon: "{%static 'media/images/HEALTHICA.png'%}",
-                link:"{{patient.dash_url}}",
-                onClick: function () {
-                    window.focus();
-                    this.close();
-                }
-            });
-            fetch(window.location.origin.toString()+'/health/updatePrescription', {
-                method: 'POST',
-                body: JSON.stringify({ patient_id: "{{patient.p_id}}" }),
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/html'
-                },
-            })
-                .then(res => res.text())
-                .then(r=>{
-                    document.querySelector('.modalrem').innerHTML = r;
-                    const med=document.querySelector('.medshow');
-                    med.innerHTML=r+med.innerHTML;
-                    //console.log(r);
-                    myreminder();
-                }).catch((error) => {
-                    console.log('Error', error);
-                    //textField.value = ''
-                });
-
-            
-            
-            //document.getElementById('noti-container').innerHTML += '<input class="checkbox" type="checkbox" id="size_1" value="small" checked />' + '<label class="notification new" for= "size_1"> <em>1</em>' + data["message"] + '<i class="material-icons dp48 right" >clear</i></label>';
-            //document.getElementById('noti-count').innerHTML = parseInt(document.getElementById('noti-count').innerHTML) + 1
-            //document.querySelector('#notification-log').value += (data.message + '\n');
-        };
-
-        notificationSocket.onclose = function (e) {
-            console.error('notification socket closed unexpectedly');
-        };
-
-        
-
-
-    </script>
+    
 </body>
 
 </html>

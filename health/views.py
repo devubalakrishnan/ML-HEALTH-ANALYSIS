@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from health.decorators import is_patient
 from .utilis import get_intent,symptoms,predict_disease,precautionDictionary,description, predict_diabetes
 from healthApp.randgenerator import rand
-from .models import Checkup, Medicines, Profile, Usersymptoms, medicine_prescription,symptoms as Symptoms, track_medicine
+from .models import Checkup, Doctor, Medicines, Profile, Usersymptoms, medicine_prescription,symptoms as Symptoms, track_medicine
 import pickle
 from .pedigree import Pedigree
 from .Ecg import  ECG
@@ -38,7 +38,8 @@ from django.contrib.sites.shortcuts import get_current_site
 
 @login_required
 def chat_bot(request):
-    return render(request,'chat-bot.html')
+    patient = Profile.objects.get(patient=request.user)
+    return render(request,'chat-bot.html',{'patient':patient})
 
 def home(request):
     content={}
@@ -57,6 +58,32 @@ def dashboard_patient(request,patient_id):
         'daily_pres':daily_prescriptions
     }
     return render(request,"dashboard-patient.html",context)
+
+@login_required
+def dashboard_doctor(request,doctor_id):
+    doctor=Doctor.objects.get(d_id=doctor_id)
+    checkups=Checkup.objects.filter(is_verified=False)
+    context={
+        'doctor_id':doctor_id,
+        'checkups':checkups,
+        'doctor':doctor,
+        'current_page': 'home',
+    }
+    return render(request,'doctor.html',context)
+
+
+def verify_checkup(request,checkup_id,patient_id):
+    if request.POST:
+        comments=request.POST.get('comments','None')
+        vdoctor = Doctor.objects.get(doctor=request.user)
+        patient = Profile.objects.get(p_id=patient_id)
+        checkup = Checkup.objects.get(checkup_user=patient,checkup_id=checkup_id)
+        checkup.is_verified=True
+        checkup.verified_by=vdoctor
+        checkup.comments=comments
+        checkup.save()
+    return redirect(vdoctor.dash_url())
+
 
 def update_timeslots(request):
     patient=Profile.objects.get(patient=request.user)
@@ -222,8 +249,11 @@ def diabetes(request):
         Age=request.POST.get('Age')
         r,pred=predict_diabetes(request)#)
         details = {key:x for key, x in request.POST.items() if key != "csrfmiddlewaretoken"}
+        
         if pred==1:
             result = "Chances of having Diabetes is more."
+        elif int(Glucoselevel) > 200:
+            result = "You maybe affected with Diabetes"
         else:
             result = "No Worries!!! You don't have Diabetes."
         details["results"]=result

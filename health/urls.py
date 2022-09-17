@@ -20,7 +20,10 @@ urlpatterns = [
     path('<str:patient_id>/myreport/<str:checkup_id>',views.show_report, name='patient-report'),
     path('timesave',views.update_timeslots,name="timesave"),
     path('updatemedicine',views.update_meds,name="medicine-update"),
-    path('update-remainder/<int:reminder_id>', views.update_reminder, name="reminder-update")
+    path('update-remainder/<int:reminder_id>', views.update_reminder, name="reminder-update"),
     #path('save-symp',update_symptoms,name='symptoms-update'),
+    #Doctor Links
+    path('<str:doctor_id>/dashboard/DR',views.dashboard_doctor, name='doctor-dash'),
+    path('verify/<str:patient_id>/<str:checkup_id>',views.verify_checkup,name='verify-checkup')
 ]
 
