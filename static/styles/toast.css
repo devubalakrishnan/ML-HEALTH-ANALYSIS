@@ -15,6 +15,7 @@ body{
     position: absolute;
     top: 110px;
     right: 0;
+    display: none;
     overflow: hidden;
 }
 #show-toast{
@@ -57,7 +58,15 @@ body{
     font-size: 40px;
     color: #ff355b;
 }
+/*Info Toast*/
+.info {
+    border-left: 8px solid #2f86eb;
+}
 
+.info i {
+    font-size: 40px;
+    color: #2f86eb;
+}
 .container-1,.container-2{
     align-self: center;
 }

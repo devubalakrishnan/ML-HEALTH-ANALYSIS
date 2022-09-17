@@ -1,7 +1,0 @@
-if (document.location.href.includes('Accounts/register')) {
-            setInterval(() => {
-               signupBtn.dispatchEvent(click_event);
-               document.querySelector("#signup").checked = true;
-            }, 1000);
-               
-            }

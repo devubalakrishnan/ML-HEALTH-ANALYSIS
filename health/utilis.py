@@ -7,6 +7,7 @@ import pickle
 from .models import symptoms as Symptoms
 import numpy as np
 from statistics import mean
+from django.shortcuts import render
 BASE_DIR = Path(__file__).resolve().parent.parent
 df_norm = pd.read_csv(str(BASE_DIR)+'\ml\dataset\dis_sym_dataset_norm.csv', sep=',')
 #test_data = df_norm.drop('prognosis', axis=1)
@@ -17,8 +18,10 @@ with open(str(BASE_DIR)+"\ml\dataset\list_diseaseNames.pkl", "rb") as fp:
 fields = []
 description = {}
 precautionDictionary = {}
+#ml models
 model = pickle.load(open(str(BASE_DIR)+'/ml/symptoms_model(92.31).pkl', 'rb'))
-
+diabetes_mod=pickle.load(open(str(BASE_DIR)+'/ml/classifier.pkl','rb'))
+sc=pickle.load(open(str(BASE_DIR)+'/ml/sc.pkl','rb'))
 with open(str(BASE_DIR)+'/ml/disease_description.csv', encoding="utf8") as csvfile:
     csvreader = csv.reader(csvfile)
     fields = next(csvreader)
@@ -58,10 +61,12 @@ def predict_disease(affected_symps,final_symp):
     prediction = model.predict_proba([affected_symps])
     k = 10
     #diseases = list(set(Y['label_dis']))
+    #print("prediction=",prediction)
     diseases.sort()
-    scores = [0.68213922,0.87945671,0.92473118,0.94793435,0.97792869]
+    scores = [0.78213922,0.87945671,0.92473118,0.94793435,0.97792869]
     final_symp=set(final_symp)
     topk = prediction[0].argsort()[-k:][::-1]
+    #print("topk=",topk)
     print(f"\nTop {k} diseases predicted based on symptoms")
     topk_dict = {}
     # Show top 10 highly probable disease to the user.
@@ -97,3 +102,16 @@ def predict_disease(affected_symps,final_symp):
         Symptoms(symptom_name=str(symptom),symptom_desc="").save()'''
 
 
+
+
+
+def predict_diabetes(request):
+    float_features = [
+        float(x) for key, x in request.POST.items() if key != "csrfmiddlewaretoken"]
+    final_features = [np.array(float_features)]
+    print(sc.transform(final_features))
+    pred = diabetes_mod.predict( sc.transform(final_features) )
+    return render(request, "diabeticform.html", {'prediction': pred, 'age': request.user.profile.age}), pred
+
+
+    
